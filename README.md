@@ -14,19 +14,12 @@
 
 - https://databetter25.github.io/dist/
 
-> 확인 절차는 **[CHECK.md](CHECK.md)**, 공개 절차는 **[DEPLOY.md](DEPLOY.md)** 에 정리되어 있습니다.
-> 처음 열어 보신다면 CHECK.md 부터 보세요.
-
 ## 로컬 실행
 
 ```bash
 python3 -m http.server 8000
 # http://localhost:8000/
 ```
-
-빌드 스텝이 없다. 정적 파일 서버만 있으면 된다.
-
-## 검증 페이지
 
 | 경로 | 내용 |
 |---|---|
