@@ -10,7 +10,9 @@
 - **중심극한정리 시뮬레이터** — 관계도의 21종 전부를 원천분포로 지원. n/R 구분, n 스윕 애니메이션, 대수의 법칙 대비, 왜도별 수렴 속도, 코시 반례
 - **학습 경로** 3종, 검색·필터
 
-**https://databetter25.github.io/dist/**
+### 연결
+
+- https://databetter25.github.io/dist/
 
 > 확인 절차는 **[CHECK.md](CHECK.md)**, 공개 절차는 **[DEPLOY.md](DEPLOY.md)** 에 정리되어 있습니다.
 > 처음 열어 보신다면 CHECK.md 부터 보세요.
