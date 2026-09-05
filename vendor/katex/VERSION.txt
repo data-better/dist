@@ -1,0 +1,6 @@
+katex 0.16.11 / downloaded 2026-09-04 / woff2 subset only
+
+폰트 정리: test/font-audit.html 이 요청한 4종만 남김
+  KaTeX_Main-Regular, KaTeX_Math-Italic, KaTeX_Size1-Regular, KaTeX_Size2-Regular
+@font-face 선언은 CSS에 그대로 두었다. 새 기호를 써서 다른 폰트가 필요해지면
+브라우저가 그 파일을 요청하고 font-audit.html 이 "필요한데 파일 없음"으로 잡아 준다.

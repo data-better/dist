@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>CLT 시뮬레이터 검증 — distribution</title>
+<link rel="stylesheet" href="test.css">
+</head>
+<body>
+<h1>중심극한정리 시뮬레이터 검증</h1>
+<p class="lead">PRD §13의 CLT 전용 수용 기준. 시뮬레이터 로직을 직접 재현해 검사한다.
+아래 두 항목(C1, C4)은 교육 장치가 실제로 작동하는지를 판정한다.</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+
+<script type="module">
+import { pdf } from '../js/distributions/pdf.js';
+import { getMoments } from '../js/distributions/moments.js';
+import { createRng, getSampler } from '../js/distributions/sample.js';
+import { Histogram } from '../js/plot/histogram.js';
+
+const out = document.getElementById('out');
+const results = [];
+const fmt = (v, d = 4) => (Number.isFinite(v) ? v.toPrecision(d) : String(v));
+
+/** 시뮬레이터와 같은 방식으로 표본평균 히스토그램을 만든다 */
+function simulate(distId, params, n, R, { bins = 60, seed = 20260904 } = {}) {
+  const m = getMoments(distId, params);
+  const valid = m.mean !== null && m.variance !== null && Number.isFinite(m.variance);
+  const rng = createRng(seed);
+  const draw = getSampler(distId);
+  const se = valid ? Math.sqrt(m.variance / n) : null;
+  const raw = [];
+  const h = new Histogram(bins);
+  if (valid) h.reset(-4.2, 4.2);
+  for (let r = 0; r < R; r++) {
+    let s = 0;
+    for (let i = 0; i < n; i++) s += draw(rng, params);
+    const v = s / n;
+    if (valid) h.push((v - m.mean) / se); else raw.push(v);
+  }
+  if (!valid) {
+    raw.sort((a, b) => a - b);
+    const q = (p) => raw[Math.min(raw.length - 1, Math.floor(p * raw.length))];
+    h.reset(q(0.01), q(0.99));
+    for (const v of raw) h.push(v);
+  }
+  return { hist: h, moments: m, valid, se };
+}
+
+function report(id, title, pass, detail) {
+  results.push({ id, pass });
+  out.insertAdjacentHTML('beforeend',
+    `<table><thead><tr><th>${id}</th><th>${title}</th><th>${pass ? 'PASS' : 'FAIL'}</th></tr></thead>`
+    + `<tbody><tr class="${pass ? 'ok' : 'bad'}"><td colspan="3">${detail}</td></tr></tbody></table>`);
+}
+
+// ── C0. n=1 이면 표본평균 분포 = 원천분포 ───────────────────────────────────
+{
+  const rows = [];
+  let pass = true;
+  for (const [id, p] of [['exponential', { lambda: 1 }], ['unif01', {}], ['beta', { alpha: 2, beta: 5 }],
+    ['gamma', { r: 4, lambda: 2 }], ['chisq', { m: 5 }], ['normal', { mu: 1, sigma: 2 }]]) {
+    const { hist, moments } = simulate(id, p, 1, 20000);
+    // 표준화 히스토그램의 왜도가 원천분포의 이론 왜도와 맞아야 한다
+    const got = hist.skewness, want = moments.skewness;
+    const ok = Math.abs(got - want) < 0.15;
+    if (!ok) pass = false;
+    rows.push(`${id}: 표본왜도 ${fmt(got, 3)} vs 이론 ${fmt(want, 3)} ${ok ? '✓' : '✗'}`);
+  }
+  report('C0', 'n=1 에서 표본평균 분포가 원천분포와 같다', pass, rows.join('<br>'));
+}
+
+// ── C1. R 을 늘려도 모양이 개선되지 않는다 (교육 장치 ①) ─────────────────────
+{
+  const n = 2;
+  const want = 2 / Math.sqrt(n);   // Exp 의 γ₁=2 → 표본평균의 이론 왜도 γ₁/√n
+  const a = simulate('exponential', { lambda: 1 }, n, 100).hist.skewness;
+  const b = simulate('exponential', { lambda: 1 }, n, 50000).hist.skewness;
+  // R 이 커지면 추정이 정확해질 뿐, 왜도가 0(정규)으로 가지 않아야 한다
+  const pass = Math.abs(b - want) < 0.1 && Math.abs(b) > 1.0;
+  report('C1', 'n 고정 후 R 만 100 → 50,000: 모양이 정규로 개선되지 않는다', pass,
+    `표본왜도 ${fmt(a, 3)} → ${fmt(b, 3)} (이론 γ₁/√n = ${fmt(want, 3)})<br>`
+    + 'R 을 늘리면 이론값에 수렴할 뿐 0 으로 가지 않는다 — 반복은 모양을 바꾸지 못한다.');
+}
+
+// ── C2. n 을 늘리면 실제로 정규에 가까워진다 ────────────────────────────────
+{
+  const rows = []; let pass = true; let prev = Infinity;
+  for (const n of [1, 2, 5, 10, 30, 100]) {
+    const { hist } = simulate('exponential', { lambda: 1 }, n, 20000);
+    const sk = Math.abs(hist.skewness);
+    const ok = sk < prev + 0.05;
+    if (!ok) pass = false;
+    prev = sk;
+    rows.push(`n=${n}: |표본왜도| ${fmt(sk, 3)} (이론 ${fmt(2 / Math.sqrt(n), 3)})`);
+  }
+  report('C2', 'n 을 늘리면 왜도가 단조 감소한다', pass, rows.join('<br>'));
+}
+
+// ── C3. Exp, n=30, R=10,000 → 평균 0±0.05, 표준편차 1±0.05 ──────────────────
+{
+  const { hist } = simulate('exponential', { lambda: 1 }, 30, 10000);
+  const pass = Math.abs(hist.mean) < 0.05 && Math.abs(hist.sd - 1) < 0.05;
+  report('C3', 'Exp · n=30 · R=10,000 의 표준화 표본평균', pass,
+    `평균 ${fmt(hist.mean, 3)} (목표 0±0.05), 표준편차 ${fmt(hist.sd, 4)} (목표 1±0.05)`);
+}
+
+// ── C4. t(1) 코시에서 n 을 늘려도 좁아지지 않는다 (교육 장치 ④) ──────────────
+{
+  const rows = []; const iqr = [];
+  for (const n of [1, 10, 100]) {
+    const { hist, valid } = simulate('t', { n: 1 }, n, 10000);
+    const q = hist.quantile(0.75) - hist.quantile(0.25);
+    iqr.push(q);
+    rows.push(`n=${n}: 사분위범위 ${fmt(q, 4)} (CLT 전제 만족 = ${valid})`);
+  }
+  const pass = iqr[2] > 0.6 * iqr[0];
+  report('C4', 't(1) 코시: n 을 1 → 100 으로 늘려도 폭이 좁아지지 않는다', pass,
+    rows.join('<br>') + '<br>정규분포라면 n=100 에서 폭이 1/10 로 줄어야 한다. 그렇지 않다.');
+}
+
+// ── C5. 자유도를 올리면 수렴이 살아난다 ─────────────────────────────────────
+{
+  const rows = []; let pass = true;
+  for (const df of [1, 2, 3, 5, 10]) {
+    const m = getMoments('t', { n: df });
+    const valid = m.mean !== null && m.variance !== null;
+    const { hist } = simulate('t', { n: df }, 30, 10000);
+    const q = hist.quantile(0.75) - hist.quantile(0.25);
+    rows.push(`t(${df}): 전제 만족 ${valid ? '예' : '아니오'}, n=30 사분위범위 ${fmt(q, 4)}`);
+    if (df >= 3 && !valid) pass = false;
+    if (df <= 2 && valid) pass = false;
+  }
+  report('C5', '분산이 존재하는 자유도 3 이상부터 CLT 전제가 만족된다', pass, rows.join('<br>'));
+}
+
+// ── C6. 이론 모멘트가 CLT 전제 판정에 쓸 만큼 정확한가 ──────────────────────
+{
+  const rows = []; let pass = true;
+  for (const [id, p, want] of [
+    ['t', { n: 1 }, 'mean=null, var=null'], ['t', { n: 2 }, 'mean=0, var=null'],
+    ['t', { n: 3 }, 'mean=0, var=3'], ['f', { r1: 5, r2: 3 }, 'mean=3, var=null'],
+    ['f', { r1: 5, r2: 10 }, 'mean=1.25, var=1.354'],
+  ]) {
+    const m = getMoments(id, p);
+    rows.push(`${id}(${JSON.stringify(p)}): mean=${m.mean === null ? 'null' : fmt(m.mean, 4)}, `
+      + `var=${m.variance === null ? 'null' : fmt(m.variance, 4)} — 기대: ${want}`);
+  }
+  const t1 = getMoments('t', { n: 1 });
+  const t2 = getMoments('t', { n: 2 });
+  const t3 = getMoments('t', { n: 3 });
+  pass = t1.mean === null && t1.variance === null && t2.mean === 0 && t2.variance === null
+    && t3.variance === 3;
+  report('C6', 'moments.js 가 존재하지 않는 모멘트를 null 로 정확히 보고한다', pass, rows.join('<br>'));
+}
+
+// ── C7. n 스윕 애니메이션: R 고정 · n 증가 · 모양 개선 ─────────────────────
+{
+  const N_SWEEP = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 65, 80, 100];
+  const R = 10000;                      // 스윕 내내 고정
+  const rows = [];
+  let pass = true;
+  let prevSkew = Infinity;
+  for (const n of [1, 2, 5, 10, 30, 100]) {
+    const { hist } = simulate('exponential', { lambda: 1 }, n, R);
+    const sk = Math.abs(hist.skewness);
+    const want = 2 / Math.sqrt(n);
+    const ok = sk < prevSkew && Math.abs(sk - want) < 0.12;
+    if (!ok) pass = false;
+    rows.push(`n=${String(n).padStart(3)} · R=${R.toLocaleString('ko-KR')} 고정 → |표본왜도| ${fmt(sk, 3)} `
+      + `(이론 γ₁/√n = ${fmt(want, 3)}) ${ok ? '✓' : '✗'}`);
+    prevSkew = sk;
+  }
+  report('C7', 'n 스윕: R 을 고정한 채 n 만 키우면 모양이 단조적으로 정규에 가까워진다', pass,
+    `애니메이션이 밟는 n 수열: ${N_SWEEP.join(', ')}<br>`
+    + rows.join('<br>')
+    + '<br>R 은 전 구간 동일하다 — 모양을 바꾸는 것은 n 이지 R 이 아니다(C1 과 대비).');
+}
+
+const failed = results.filter((r) => !r.pass);
+const el = document.getElementById('summary');
+el.className = `summary ${failed.length ? 'bad' : 'ok'}`;
+el.innerHTML = failed.length
+  ? `<strong>${failed.length}개 항목 FAIL</strong> — ${failed.map((f) => f.id).join(', ')}`
+  : `<strong>전 항목 PASS</strong> — ${results.map((r) => r.id).join(', ')} (${results.length}개 항목)`;
+</script>
+</body>
+</html>

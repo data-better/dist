@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>이산분포 검증 — distribution</title>
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="test.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+</head>
+<body>
+<h1>이산분포 검증</h1>
+<p class="lead">확률질량함수·누적분포함수·모멘트를 참조값(R 또는 scipy)과 대조하고, 표본생성기를 카이제곱 적합도로,
+관계 시뮬레이션을 KS 검정으로 확인한다. 데이터 정합성도 함께 본다.
+<b>기하·음이항은 시행 횟수 관례</b>임에 주의 (참조값 생성 스크립트가 이를 맞춰 준다).</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+
+<script type="module">
+import { pmf, cdfD, momentsD, sampleD, supportRange } from '../js/distributions/discrete.js';
+import { createRng } from '../js/distributions/sample.js';
+import { recipes } from '../js/panel/simulation.js';
+import { validateData } from '../js/util/validate.js';
+import { loadGraphData, selectGraph } from '../js/util/graphdata.js';
+import { canParseTex, texToHtml } from '../js/util/latex.js';
+
+const out = document.getElementById('out');
+const results = [];
+const fmt = (v, d = 4) => (Number.isFinite(v) ? Number(v.toPrecision(d)) : String(v));
+
+function section(title, note, head, rows) {
+  const s = document.createElement('section');
+  s.innerHTML = `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}`
+    + `<table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map((r) => `<tr class="${r.pass ? 'ok' : 'bad'}">${r.cells.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')
+    + '</tbody></table>';
+  out.appendChild(s);
+}
+
+for (let i = 0; i < 60 && typeof window.katex === 'undefined'; i++) {
+  await new Promise((r) => setTimeout(r, 50));
+}
+
+// ── 1. PMF·CDF·모멘트 정확도 ───────────────────────────────────────────────
+{
+  let ref = null;
+  try { ref = await (await fetch('discrete-reference.json')).json(); } catch { /* 아래에서 안내 */ }
+  if (!ref) {
+    out.insertAdjacentHTML('beforeend',
+      '<section><h2>1. PMF·CDF 정확도</h2><p class="bad-box">discrete-reference.json 이 없습니다. '
+      + '<code>Rscript tools/make_discrete_reference.R</code> 또는 '
+      + '<code>python3 tools/make_discrete_reference.py</code> 를 실행하세요.</p></section>');
+    results.push({ id: 'PMF·CDF', pass: false });
+  } else {
+    const rows = [];
+    let allPass = true;
+    for (const b of ref) {
+      let mxP = 0, mxC = 0, nonFinite = 0;
+      for (let i = 0; i < b.k.length; i++) {
+        const gp = pmf[b.id](b.k[i], b.params);
+        const gc = cdfD[b.id](b.k[i], b.params);
+        if (!Number.isFinite(gp) || !Number.isFinite(gc)) { nonFinite++; continue; }
+        mxP = Math.max(mxP, Math.abs(gp - b.pmf[i]) / Math.max(b.pmf[i], 1e-300));
+        mxC = Math.max(mxC, Math.abs(gc - b.cdf[i]) / Math.max(b.cdf[i], 1e-300));
+      }
+      const m = momentsD[b.id](b.params);
+      const okM = Math.abs(m.mean - b.mean) < 1e-9 * Math.max(1, Math.abs(b.mean));
+      const okV = Math.abs(m.variance - b.var) < 1e-9 * Math.max(1, b.var);
+      const pass = mxP < 1e-9 && mxC < 1e-9 && nonFinite === 0 && okM && okV;
+      if (!pass) allPass = false;
+      rows.push({ pass, cells: [b.id, JSON.stringify(b.params), b.k.length,
+        mxP.toExponential(2), mxC.toExponential(2), okM && okV ? '일치' : '불일치',
+        pass ? 'PASS' : 'FAIL'] });
+    }
+    section('1. PMF·CDF·모멘트 정확도', `참조값 대비 상대오차 &lt; 1e-9 (블록 ${ref.length}개)`,
+      ['분포', '모수', '점 수', 'PMF 최대오차', 'CDF 최대오차', '평균·분산', ''], rows);
+    results.push({ id: 'PMF·CDF', pass: allPass });
+  }
+}
+
+// ── 2. 극단 모수 — 비유한값이 없는가 ──────────────────────────────────────
+{
+  const ext = [
+    ['binomial', { n: 200, p: 0.999 }], ['binomial', { n: 1, p: 0.001 }],
+    ['poisson', { lambda: 0.01 }], ['poisson', { lambda: 60 }],
+    ['geometric', { p: 0.999 }], ['geometric', { p: 0.02 }],
+    ['negbinomial', { r: 40, p: 0.99 }], ['negbinomial', { r: 1, p: 0.05 }],
+    ['hypergeometric', { N: 400, K: 1, n: 100 }], ['hypergeometric', { N: 30, K: 29, n: 29 }],
+    ['bernoulli', { p: 0.001 }], ['discreteUniform', { a: -20, b: 60 }],
+  ];
+  const ks = [-1e6, -5, -1, -0.5, 0, 0.5, 1, 2.5, 10, 1000, 1e6, NaN, Infinity];
+  const rows = [];
+  let allPass = true;
+  for (const [id, p] of ext) {
+    let bad = 0;
+    for (const k of ks) {
+      const a = pmf[id](k, p);
+      const b = cdfD[id](k, p);
+      if (!Number.isFinite(a)) bad++;
+      if (!Number.isNaN(k) && !Number.isFinite(b)) bad++;
+    }
+    // 확률의 합이 1인가 (지지집합 전체)
+    const [lo, hi] = supportRange(id, p, 1e-12);
+    let s = 0;
+    for (let k = lo; k <= hi; k++) s += pmf[id](k, p);
+    const okSum = Math.abs(s - 1) < 1e-6;
+    const pass = bad === 0 && okSum;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), bad, fmt(s, 10), pass ? 'PASS' : 'FAIL'] });
+  }
+  section('2. 극단 모수', 'NaN·Infinity 가 나오지 않고, 지지집합 위 확률의 합이 1 ± 1e-6 인가',
+    ['분포', '모수', '비유한값', 'Σ P(X=k)', ''], rows);
+  results.push({ id: '극단 모수', pass: allPass });
+}
+
+// ── 3. 표본생성기 — 카이제곱 적합도 ───────────────────────────────────────
+{
+  const cases = [
+    ['bernoulli', { p: 0.3 }], ['binomial', { n: 10, p: 0.5 }], ['binomial', { n: 200, p: 0.7 }],
+    ['geometric', { p: 0.3 }], ['geometric', { p: 0.05 }],
+    ['negbinomial', { r: 3, p: 0.3 }], ['negbinomial', { r: 8, p: 0.6 }],
+    ['poisson', { lambda: 0.5 }], ['poisson', { lambda: 3 }], ['poisson', { lambda: 60 }],
+    ['hypergeometric', { N: 50, K: 20, n: 10 }], ['hypergeometric', { N: 200, K: 80, n: 40 }],
+    ['discreteUniform', { a: 1, b: 6 }],
+  ];
+  const N = 200000;
+  const rows = [];
+  let allPass = true;
+  for (const [id, p] of cases) {
+    const rng = createRng(20260905);
+    const cnt = new Map();
+    let sum = 0, sum2 = 0;
+    for (let i = 0; i < N; i++) {
+      const v = sampleD[id](rng, p);
+      cnt.set(v, (cnt.get(v) || 0) + 1);
+      sum += v; sum2 += v * v;
+    }
+    const [lo, hi] = supportRange(id, p, 1e-7);
+    let chi2 = 0, df = 0, tailO = 0, tailE = 0, outside = 0;
+    for (let k = lo; k <= hi; k++) {
+      const e = pmf[id](k, p) * N;
+      const o = cnt.get(k) || 0;
+      if (e < 5) { tailO += o; tailE += e; continue; }
+      chi2 += ((o - e) ** 2) / e; df++;
+    }
+    if (tailE >= 5) { chi2 += ((tailO - tailE) ** 2) / tailE; df++; }
+    df = Math.max(1, df - 1);
+    for (const k of cnt.keys()) if (k < lo || k > hi || !Number.isInteger(k)) outside += cnt.get(k);
+    const m = momentsD[id](p);
+    const mean = sum / N;
+    const varr = sum2 / N - mean * mean;
+    const crit = df + 3.3 * Math.sqrt(2 * df) + 10;   // p ≈ 0.001 상당
+    const pass = chi2 < crit && outside === 0;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), fmt(chi2, 4), df,
+      `${fmt(mean)} / ${fmt(m.mean)}`, `${fmt(varr)} / ${fmt(m.variance)}`,
+      outside, pass ? 'PASS' : 'FAIL'] });
+  }
+  section('3. 표본생성기', `표본 ${N.toLocaleString('ko-KR')}개의 피어슨 카이제곱 적합도 (기대도수 5 미만은 꼬리로 병합)`,
+    ['분포', '모수', 'χ²', 'df', '표본평균 / 이론', '표본분산 / 이론', '지지집합 이탈', ''], rows);
+  results.push({ id: '표본생성기', pass: allPass });
+}
+
+// ── 4. 관계 시뮬레이션 — KS 검정 ──────────────────────────────────────────
+{
+  const rels = selectGraph(await loadGraphData('../data/'), 'discrete').rels;
+  const N = 100000;
+  const CRIT = 1.63 / Math.sqrt(N);
+  const rows = [];
+  let allPass = true;
+  for (const r of rels) {
+    if (!r.simulation) continue;
+    const sp = r.simulation;
+    const fn = recipes[sp.recipe];
+    if (!fn) { rows.push({ pass: false, cells: [r.id, sp.recipe, '레시피 없음', '', 'FAIL'] }); allPass = false; continue; }
+    const p = Object.fromEntries((sp.controls || []).map((c) => [c.symbol, c.default]));
+    const rec = fn(p, createRng(20260905), {});
+    const F = cdfD[rec.target.id];
+    // 이산자료는 동점이 많아 순위 기반 경험분포가 성립하지 않는다. 도수표로 계산한다.
+    const cnt = new Map();
+    for (let i = 0; i < N; i++) {
+      const v = rec.draw();
+      cnt.set(v, (cnt.get(v) || 0) + 1);
+    }
+    let acc = 0, D = 0;
+    for (const k of [...cnt.keys()].sort((a, b) => a - b)) {
+      acc += cnt.get(k);
+      D = Math.max(D, Math.abs(acc / N - F(k, rec.target.params)));
+    }
+    const approx = r.type === 'limit';
+    const pass = approx || D < CRIT;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [r.id, sp.recipe, D.toFixed(5),
+      `${rec.target.id}(${Object.entries(rec.target.params).map(([k, v]) => `${k}=${v}`).join(', ')})`,
+      approx ? '근사 데모 — 아래 5번에서 판정' : (pass ? 'PASS' : 'FAIL')] });
+  }
+  section('4. 관계 시뮬레이션', `표본 ${N.toLocaleString('ko-KR')}개, 임계값 D &lt; ${CRIT.toFixed(5)}`,
+    ['관계', '레시피', 'KS 거리 D', '이론 분포', ''], rows);
+  results.push({ id: '관계 시뮬레이션', pass: allPass });
+}
+
+// ── 5. 근사 데모 — 극한 모수를 키우면 가까워지는가 ────────────────────────
+{
+  const rows = [];
+  let allPass = true;
+  const runs = [
+    ['D7', 'binomToPoisson', 'n', [5, 10, 20, 50, 100, 400], (v) => ({ n: v, lambda: 4 })],
+    ['D9', 'hyperToBinom', 'N', [20, 40, 100, 200, 400, 800], (v) => ({ N: v, n: 10 })],
+  ];
+  for (const [id, name, sym, seq, mk] of runs) {
+    let prev = Infinity;
+    for (const v of seq) {
+      const rec = recipes[name](mk(v), createRng(20260905), {});
+      const F = cdfD[rec.target.id];
+      const N = 60000;
+      const cnt = new Map();
+      for (let i = 0; i < N; i++) { const x = rec.draw(); cnt.set(x, (cnt.get(x) || 0) + 1); }
+      let acc = 0, D = 0;
+      for (const k of [...cnt.keys()].sort((a, b) => a - b)) {
+        acc += cnt.get(k);
+        D = Math.max(D, Math.abs(acc / N - F(k, rec.target.params)));
+      }
+      const pass = D < prev;
+      if (!pass) allPass = false;
+      rows.push({ pass, cells: [id, `${sym} = ${v}`, D.toFixed(4), pass ? '감소 ↓' : '증가 ↑'] });
+      prev = D;
+    }
+  }
+  section('5. 근사 데모 수렴', '극한 모수를 키울 때 이론 분포와의 KS 거리가 단조 감소하는가',
+    ['관계', '모수', 'KS 거리', ''], rows);
+  results.push({ id: '근사 수렴', pass: allPass });
+}
+
+// ── 6. 데이터 정합성 + 관계 목록 ──────────────────────────────────────────
+{
+  const { dists, rels } = selectGraph(await loadGraphData('../data/'), 'discrete');
+  const res = validateData(dists, rels, canParseTex);
+  section('6. 데이터 정합성', `이산 ${dists.filter((d) => d.discrete).length}종 + 연속 다리 ${dists.filter((d) => d.isBridge).length}종, 관계 ${rels.length}개`,
+    ['항목', '결과', '상세'],
+    res.checks.map((c) => ({ pass: c.pass, cells: [c.nameKo, c.pass ? 'PASS' : 'FAIL', c.detail || '—'] })));
+  results.push({ id: '데이터 정합성', pass: res.allPass });
+
+  const TYPE = { transform: '변환', special: '특수화', limit: '극한' };
+  section('7. 관계 목록', '', ['id', 'from → to', '유형', '유도', '시뮬레이션', '요약'],
+    rels.map((r) => ({ pass: true, cells: [r.id, `${r.from} → ${r.to}`, TYPE[r.type],
+      (r.derivation || []).length, r.simulation ? r.simulation.recipe : '—', r.summaryKo] })));
+}
+
+const failed = results.filter((r) => !r.pass);
+const el = document.getElementById('summary');
+el.className = `summary ${failed.length ? 'bad' : 'ok'}`;
+el.innerHTML = failed.length
+  ? `<strong>${failed.length}개 항목 FAIL</strong> — ${failed.map((f) => f.id).join(', ')}`
+  : `<strong>전 항목 PASS</strong> — ${results.map((r) => r.id).join(', ')}`;
+</script>
+</body>
+</html>

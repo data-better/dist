@@ -1,0 +1,129 @@
+/* 상세 패널 (분포 · 관계) */
+
+.panel-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.panel-kicker {
+  width: 100%; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700;
+}
+.panel-title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 17px; }
+.panel-title-rel { gap: 8px; }
+.panel-name { font-size: 13.5px; color: var(--muted); font-weight: 500; }
+.panel-desc { font-size: 13.5px; line-height: 1.75; }
+.panel-use { font-size: 13px; color: var(--muted); }
+.badges { display: flex; gap: 5px; flex-wrap: wrap; width: 100%; }
+
+.node-chip {
+  border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--fg);
+  border-radius: 6px; padding: 3px 10px; cursor: pointer; font: inherit;
+}
+.node-chip:hover { border-color: var(--accent); }
+.arrow { color: var(--muted); font-size: 16px; }
+
+.def-block {
+  margin: 12px 0; padding: 12px 14px; background: var(--surface-2);
+  border-radius: var(--radius); display: grid; gap: 6px;
+}
+.def-card { background: var(--accent-soft); }
+.def-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: baseline; }
+.def-row dt { color: var(--muted); font-size: 12px; }
+.def-row dd { margin: 0; font-size: 13px; overflow-x: auto; }
+
+.controls { display: grid; gap: 12px; margin: 14px 0 6px; }
+.ctrl-label { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
+.ctrl-name { color: var(--muted); }
+.ctrl-val {
+  margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent);
+}
+.ctrl-inputs { display: flex; gap: 8px; align-items: center; }
+.ctrl-inputs .ctrl-range { flex: 1; }
+.ctrl-num { width: 78px; }
+.ctrl-msg { color: var(--warn); font-size: 12px; }
+.ctrl-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.presets { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+.presets-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.edge-lists { margin-top: 18px; }
+.edge-lists h3 { font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+.edge-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.edge-item {
+  width: 100%; text-align: left; display: grid;
+  grid-template-columns: 32px 48px 1fr; gap: 8px; align-items: baseline;
+  border: 1px solid var(--line); background: var(--surface); border-radius: 6px;
+  padding: 6px 9px; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--fg);
+}
+.edge-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+.edge-item-id { font-weight: 700; color: var(--accent); font-size: 11.5px; }
+.edge-item-type { font-size: 11px; color: var(--muted); }
+.edge-item-type.type-limit { color: var(--fam-ratio); }
+.edge-item-text { line-height: 1.5; }
+
+/* 유도 아코디언 */
+.deriv-wrap { margin-top: 18px; }
+.deriv-head { display: flex; align-items: baseline; justify-content: space-between; }
+.deriv-head h3 { font-size: 14px; }
+.deriv-counter { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.deriv { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 10px; counter-reset: s; }
+.deriv-step {
+  border-left: 2px solid var(--line-strong); padding: 2px 0 2px 12px; counter-increment: s;
+}
+.deriv-step::before {
+  content: counter(s) "단계"; font-size: 11px; color: var(--muted); font-weight: 700;
+}
+.deriv-tex { margin: 4px 0; overflow-x: auto; font-size: 13px; }
+.deriv-note { margin: 4px 0 0; font-size: 12.8px; color: var(--muted); line-height: 1.7; }
+.deriv-actions { display: flex; gap: 8px; align-items: center; }
+
+.limit-demo { margin: 16px 0; padding: 12px 14px; background: var(--surface-2); border-radius: var(--radius); }
+.limit-demo h3 { font-size: 14px; margin-bottom: 4px; }
+.limit-demo .muted { font-size: 12.5px; }
+.limit-note { font-size: 12.5px; color: var(--muted); margin: 2px 0 0; }
+
+.panel-empty h2 { font-size: 17px; margin-bottom: 8px; }
+.panel-empty p { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+.hint-list { font-size: 12.8px; color: var(--muted); padding-left: 18px; line-height: 1.9; }
+
+.tex-fallback { color: var(--warn); }
+
+/* 반응형 (PRD §8.1) */
+@media (max-width: 1023px) {
+  .main { flex-direction: column; }
+  .graph-pane { flex: 0 0 46vh; }
+  .panel-pane { flex: 1; max-width: none; min-width: 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 767px) {
+  .graph-pane { flex: 0 0 52vh; }
+  .edge-label-fo { display: none; }
+  .graph-svg.zoomed .edge-label-fo { display: block; }
+  .panel-pane { padding: 14px 14px 32px; }
+  .def-row { grid-template-columns: 74px 1fr; }
+  #legend { font-size: 10.5px; gap: 8px; padding: 4px 7px; }
+}
+
+/* ── 시뮬레이션 데모 (F4) ────────────────────────────────────────────────── */
+.sim {
+  margin: 18px 0; padding: 12px 14px 14px;
+  background: var(--surface-2); border-radius: var(--radius);
+}
+.sim-head { display: flex; align-items: baseline; justify-content: space-between; }
+.sim-head h3 { font-size: 14px; }
+.sim-count { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sim-title { font-size: 13.5px; font-weight: 600; margin: 6px 0 2px; }
+.sim-note { font-size: 12.5px; line-height: 1.7; margin-bottom: 10px; }
+.sim-controls { display: grid; gap: 8px; margin-bottom: 6px; }
+.sim-ctrl { display: flex; align-items: center; gap: 9px; font-size: 12.5px; }
+.sim-ctrl-name { color: var(--muted); min-width: 74px; }
+.sim-ctrl .ctrl-range { flex: 1; }
+.sim-ctrl .ctrl-val { margin-left: 0; min-width: 34px; text-align: right; }
+.sim-ctrl select { flex: 1; }
+.sim-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.sim-stats { margin-top: 8px; }
+.sim-table { border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.sim-table th, .sim-table td { padding: 3px 12px 3px 0; text-align: left; }
+.sim-table th { color: var(--muted); font-weight: 600; font-size: 11px; }
+.sim-table td:first-child { color: var(--muted); }
+.sim-clip { font-size: 11.5px; margin: 4px 0 0; }
+
+/* 빈 패널 안의 학습 경로 메뉴 */
+.panel-empty .tour-menu { flex-direction: column; align-items: stretch; gap: 6px; margin: 14px 0 4px; }
+.panel-empty .btn-tour { width: 100%; padding: 8px 12px; }

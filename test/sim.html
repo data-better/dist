@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>시뮬레이션 레시피 검증 — distribution</title>
+<link rel="stylesheet" href="test.css">
+</head>
+<body>
+<h1>시뮬레이션 레시피 검증</h1>
+<p class="lead">각 관계의 시뮬레이션이 <b>정말 그 이론 분포를 만드는가</b>를 콜모고로프–스미르노프 검정으로 확인한다.
+D = sup|F̂(x) − F(x)| 이며, 표본 5만개에서 유의수준 0.01의 임계값은 1.63/√n = 0.00729 이다.</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+
+<script type="module">
+import { recipes } from '../js/panel/simulation.js';
+import { createRng } from '../js/distributions/sample.js';
+import { cdf } from '../js/distributions/cdf.js';
+
+const N = 50000;
+const CRIT = 1.63 / Math.sqrt(N);
+const out = document.getElementById('out');
+const results = [];
+
+// 변환 결과의 '참 분포'. 대부분 레시피의 target 과 같지만, 근사 데모(E23·E24)는
+// target 이 비교용 곡선일 뿐이므로 참 분포를 따로 지정한다.
+const TRUE_LAW = {
+  E24: (p) => ({ id: 't', params: { n: p.n } }),
+};
+const APPROX = new Set(['E23', 'E24']);   // 수렴 여부로 판정할 데모
+
+function ksStat(draw, F, params) {
+  const xs = new Float64Array(N);
+  let bad = 0;
+  for (let i = 0; i < N; i++) {
+    const v = draw();
+    if (!Number.isFinite(v)) bad++;
+    xs[i] = v;
+  }
+  xs.sort();
+  let D = 0;
+  for (let i = 0; i < N; i++) {
+    const F0 = F(xs[i], params);
+    D = Math.max(D, Math.abs(F0 - i / N), Math.abs((i + 1) / N - F0));
+  }
+  return { D, bad };
+}
+
+const [rels, dists] = await Promise.all([
+  fetch('../data/relations.json').then((r) => r.json()),
+  fetch('../data/distributions.json').then((r) => r.json()),
+]);
+
+// ── 1. 정확한 변환 (KS 검정) ───────────────────────────────────────────────
+{
+  const rows = [];
+  let allPass = true;
+  for (const r of rels) {
+    // 이산 관계(D…)는 test/discrete.html 에서 이산 CDF로 따로 검정한다
+    if (!r.simulation || APPROX.has(r.id) || r.id.startsWith('D')) continue;
+    const sp = r.simulation;
+    const fn = recipes[sp.recipe];
+    if (!fn) { rows.push({ pass: false, cells: [r.id, sp.recipe, '레시피 없음', '', 'FAIL'] }); allPass = false; continue; }
+    const p = Object.fromEntries((sp.controls || []).map((c) => [c.symbol, c.default]));
+    const rec = fn(p, createRng(20260904), { cdf, source: { id: 'stdnormal', params: {} } });
+    const law = TRUE_LAW[r.id] ? TRUE_LAW[r.id](p) : rec.target;
+    const { D, bad } = ksStat(rec.draw, cdf[law.id], law.params);
+    const pass = D < CRIT && bad === 0;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [r.id, sp.recipe, lawLabel(law), D.toFixed(5), pass ? 'PASS' : 'FAIL'] });
+  }
+  section('1. 정확한 변환 — KS 검정', `표본 ${N.toLocaleString('ko-KR')}개, 임계값 D &lt; ${CRIT.toFixed(5)}`,
+    ['관계', '레시피', '참 분포', 'KS 거리 D', ''], rows);
+  results.push({ id: '정확한 변환', pass: allPass });
+}
+
+// ── 2. 근사 데모 (수렴 확인) ───────────────────────────────────────────────
+{
+  const rows = [];
+  let allPass = true;
+  const cases = [
+    ['E23', 'gammaNormalApprox', 'r', [2, 5, 10, 30, 100, 300], (v) => ({ r: v, lambda: 1 })],
+    ['E24', 'tToNormal', 'n', [1, 2, 5, 30, 200], (v) => ({ n: v })],
+  ];
+  for (const [id, name, sym, vals, mk] of cases) {
+    let prev = Infinity;
+    for (const v of vals) {
+      const rec = recipes[name](mk(v), createRng(20260904), { cdf });
+      const { D } = ksStat(rec.draw, cdf.stdnormal, {});
+      const pass = D < prev;
+      if (!pass) allPass = false;
+      rows.push({ pass, cells: [id, `${sym} = ${v}`, D.toFixed(5), pass ? '감소 ↓' : '증가 ↑'] });
+      prev = D;
+    }
+  }
+  section('2. 근사 데모 — 극한 모수를 키우면 표준정규와의 거리가 줄어드는가',
+    'E23·E24는 정확한 변환이 아니라 근사이므로, KS 거리의 단조 감소로 판정한다',
+    ['관계', '모수', 'N(0,1) 과의 KS 거리', ''], rows);
+  results.push({ id: '근사 수렴', pass: allPass });
+}
+
+// ── 3. 데이터·레시피 정합 ─────────────────────────────────────────────────
+{
+  const rows = [];
+  let allPass = true;
+  const withSim = rels.filter((r) => r.simulation);
+  for (const r of withSim) {
+    const sp = r.simulation;
+    const problems = [];
+    if (!recipes[sp.recipe]) problems.push('레시피 미등록');
+    if (!sp.titleKo) problems.push('titleKo 없음');
+    if (!sp.noteKo) problems.push('noteKo 없음');
+    for (const c of sp.controls || []) {
+      if (c.default < c.min || c.default > c.max) problems.push(`${c.symbol} 기본값 범위 밖`);
+    }
+    const pass = problems.length === 0;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [r.id, sp.recipe, (sp.controls || []).length, problems.join(', ') || '—', pass ? 'PASS' : 'FAIL'] });
+  }
+  const unused = Object.keys(recipes).filter((k) => !withSim.some((r) => r.simulation.recipe === k));
+  if (unused.length) {
+    rows.push({ pass: false, cells: ['—', unused.join(', '), '', '데이터에서 쓰이지 않는 레시피', 'FAIL'] });
+    allPass = false;
+  }
+  section('3. 데이터·레시피 정합', `시뮬레이션을 가진 관계 ${withSim.length}개`,
+    ['관계', '레시피', '조작 요소', '문제', ''], rows);
+  results.push({ id: '정합성', pass: allPass });
+}
+
+function lawLabel(law) {
+  const p = Object.entries(law.params).map(([k, v]) => `${k}=${v}`).join(', ');
+  return p ? `${law.id}(${p})` : law.id;
+}
+
+function section(title, note, head, rows) {
+  const s = document.createElement('section');
+  s.innerHTML = `<h2>${title}</h2><p class="note">${note}</p>`
+    + `<table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map((r) => `<tr class="${r.pass ? 'ok' : 'bad'}">${r.cells.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')
+    + '</tbody></table>';
+  out.appendChild(s);
+}
+
+const failed = results.filter((r) => !r.pass);
+const el = document.getElementById('summary');
+el.className = `summary ${failed.length ? 'bad' : 'ok'}`;
+el.innerHTML = failed.length
+  ? `<strong>${failed.length}개 항목 FAIL</strong> — ${failed.map((f) => f.id).join(', ')}`
+  : `<strong>전 항목 PASS</strong> — ${results.map((r) => r.id).join(', ')}`;
+</script>
+</body>
+</html>

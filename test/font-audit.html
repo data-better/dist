@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>KaTeX 폰트 감사 — distribution</title>
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="test.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+</head>
+<body>
+<h1>KaTeX 폰트 감사</h1>
+<p class="lead">
+  데이터 파일에 든 <b>모든 LaTeX 문자열</b>을 실제로 렌더링한 뒤, 브라우저가 요청한 폰트 파일을 집계한다.
+  <code>vendor/katex/fonts/</code> 에는 여기서 <b>실제로 쓰이는 폰트만</b> 두어 전송 용량을 줄이고 있으므로,
+  수식을 추가한 뒤에는 이 페이지를 열어 <b>빠진 폰트가 생기지 않았는지</b> 확인해야 한다.
+</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+<div id="sink" aria-hidden="true" style="position:absolute;left:-9999px;top:0;width:2000px"></div>
+
+<script type="module">
+const out = document.getElementById('out');
+const sink = document.getElementById('sink');
+
+// 리포지토리에 실제로 들어 있는 폰트 (설치 스크립트와 함께 유지한다)
+const SHIPPED = [
+  'KaTeX_Main-Regular.woff2',
+  'KaTeX_Math-Italic.woff2',
+  'KaTeX_Size1-Regular.woff2',
+  'KaTeX_Size2-Regular.woff2',
+];
+
+for (let i = 0; i < 60 && typeof window.katex === 'undefined'; i++) {
+  await new Promise((r) => setTimeout(r, 50));
+}
+
+const [dists, rels, tours] = await Promise.all([
+  fetch('../data/distributions.json').then((r) => r.json()),
+  fetch('../data/relations.json').then((r) => r.json()),
+  fetch('../data/tours.json').then((r) => r.json()).catch(() => []),
+]);
+
+// ── 데이터에 든 LaTeX 문자열을 전부 모은다 ─────────────────────────────────
+const items = [];
+const add = (tex, where) => { if (tex) items.push({ tex, where }); };
+for (const d of dists) {
+  add(d.notation, `${d.id}.notation`);
+  add(d.pdfLatex, `${d.id}.pdfLatex`);
+  add(d.support?.latex, `${d.id}.support`);
+  for (const k of ['meanLatex', 'varianceLatex', 'mgfLatex']) add(d.moments?.[k], `${d.id}.${k}`);
+  for (const p of d.params || []) add(p.notation, `${d.id}.param.${p.symbol}`);
+}
+for (const r of rels) {
+  add(r.conditionLatex, `${r.id}.condition`);
+  add(r.transformLatex, `${r.id}.transform`);
+  add(r.edgeLabelLatex, `${r.id}.edgeLabel`);
+  (r.derivation || []).forEach((s, i) => add(s.latex, `${r.id}.derivation[${i}]`));
+}
+// about.html 과 패널 코드에 하드코딩된 수식도 포함한다
+for (const [tex, where] of [
+  ['f(x) = \\frac{\\lambda^{r}}{\\Gamma(r)}x^{r-1}e^{-\\lambda x}', 'about.rate'],
+  ['\\theta = 1/\\lambda', 'about.scale'],
+  ['\\bar{X}', 'clt.xbar'],
+  ['Z=\\frac{\\bar{X}-\\mu}{\\sigma/\\sqrt{n}}', 'clt.z'],
+  ['\\sum Z_i^2\\sim\\chi^2(n)', 'about.sumsq'],
+  ['{}_1F_1(\\alpha;\\alpha+\\beta;t)', 'beta.mgf'],
+]) add(tex, where);
+
+// ── 렌더링 + 파싱 실패 검출 ───────────────────────────────────────────────
+const failures = [];
+for (const it of items) {
+  const el = document.createElement('div');
+  sink.appendChild(el);
+  try {
+    window.katex.render(it.tex, el, { displayMode: true, throwOnError: true });
+  } catch (e) {
+    failures.push({ ...it, msg: e.message });
+  }
+}
+
+// 폰트 로드가 끝나기를 기다린다
+await document.fonts.ready;
+await new Promise((r) => setTimeout(r, 400));
+
+// ── 실제로 요청된 폰트 집계 ───────────────────────────────────────────────
+const requested = new Set(
+  performance.getEntriesByType('resource')
+    .filter((r) => r.name.includes('/fonts/'))
+    .map((r) => r.name.split('/').pop())
+);
+
+const missing = [...requested].filter((f) => !SHIPPED.includes(f));
+const unused = SHIPPED.filter((f) => !requested.has(f));
+
+section('1. LaTeX 파싱', `데이터·코드에 든 수식 ${items.length}개를 전부 렌더링`,
+  ['결과', '개수', ''],
+  [{ pass: failures.length === 0, cells: ['파싱 실패', failures.length, failures.length ? 'FAIL' : 'PASS'] }]);
+if (failures.length) {
+  section('실패한 수식', '', ['위치', '수식', '메시지'],
+    failures.map((f) => ({ pass: false, cells: [f.where, `<code>${escape(f.tex)}</code>`, f.msg] })));
+}
+
+section('2. 폰트 사용 현황',
+  '리포지토리에 든 폰트와 실제로 요청된 폰트가 일치하는가',
+  ['폰트', '리포지토리에 있음', '실제 사용', ''],
+  [...new Set([...SHIPPED, ...requested])].sort().map((f) => {
+    const has = SHIPPED.includes(f);
+    const use = requested.has(f);
+    return { pass: !(use && !has), cells: [f, has ? '○' : '✗', use ? '○' : '—', use && !has ? 'FAIL — 파일 없음' : 'OK'] };
+  }));
+
+if (missing.length) {
+  out.insertAdjacentHTML('beforeend',
+    `<p class="bad-box"><b>폰트 ${missing.length}개가 필요한데 리포지토리에 없습니다:</b> ${missing.join(', ')}<br>`
+    + 'KaTeX 배포본에서 해당 <code>.woff2</code> 파일을 <code>vendor/katex/fonts/</code> 로 복사하고, '
+    + '<code>vendor/katex/katex.min.css</code> 의 <code>@font-face</code> 블록도 함께 되살리세요. '
+    + '그리고 이 페이지 상단의 <code>SHIPPED</code> 목록에 추가하세요.</p>');
+}
+if (unused.length) {
+  out.insertAdjacentHTML('beforeend',
+    `<p class="note">사용되지 않는 폰트 ${unused.length}개: ${unused.join(', ')} — 지워도 되지만, `
+    + '나중에 새 기호를 쓸 때 다시 필요해질 수 있습니다.</p>');
+}
+
+const pass = failures.length === 0 && missing.length === 0;
+const el = document.getElementById('summary');
+el.className = `summary ${pass ? 'ok' : 'bad'}`;
+el.innerHTML = pass
+  ? `<strong>전 항목 PASS</strong> — 수식 ${items.length}개 파싱 성공, 폰트 ${requested.size}종 모두 리포지토리에 있음`
+  : `<strong>FAIL</strong> — 파싱 실패 ${failures.length}건, 누락 폰트 ${missing.length}종`;
+
+function section(title, note, head, rows) {
+  const s = document.createElement('section');
+  s.innerHTML = `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}`
+    + `<table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map((r) => `<tr class="${r.pass ? 'ok' : 'bad'}">${r.cells.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')
+    + '</tbody></table>';
+  out.appendChild(s);
+}
+function escape(s) {
+  return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+</script>
+</body>
+</html>

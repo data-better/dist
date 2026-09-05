@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>표기 규약 — 확률분포 관계 탐색기</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/graph.css">
+<link rel="stylesheet" href="css/panel.css">
+<link rel="stylesheet" href="css/about.css">
+<script defer src="vendor/katex/katex.min.js"></script>
+</head>
+<body class="page-about">
+<header class="topbar">
+  <h1>표기 규약과 출처</h1>
+  <span class="spacer"></span>
+  <nav>
+    <a href="index.html">전체 관계도</a>
+    <a href="discrete.html">이산 관계도</a>
+    <a href="clt.html">중심극한정리</a>
+    <a href="about.html" class="on">표기 규약</a>
+  </nav>
+</header>
+
+<main class="about">
+  <section>
+    <h2>이 사이트는 무엇인가</h2>
+    <p>수리통계학에서 확률분포는 고립된 개념이 아니라 <b>변환</b>, <b>특수화</b>, <b>극한</b>이라는 세 가지
+      관계로 연결된 하나의 그물망입니다. 교재는 분포를 한 장에 하나씩 순서대로 다루기 때문에
+      이 연결 구조가 잘 보이지 않습니다. 이 사이트는 그 구조를 지도처럼 훑고, 모수를 직접 움직여
+      확인하고, 각 관계가 왜 성립하는지 단계별로 따라갈 수 있게 만든 것입니다.</p>
+    <p>확률분포 21종(연속 14 · 이산 7)과 그 사이의 관계 61개, 그리고 중심극한정리 전용 시뮬레이터로 이루어져 있습니다.</p>
+    <p>화면은 둘입니다. <b>전체 관계도</b>는 원본 참조 다이어그램을 그대로 옮긴 것으로 연속과 이산을 한 장에 담았고,
+      <b>이산 관계도</b>는 이산분포 7종을 크게 펼쳐 보되 이들이 극한에서 도달하는 연속분포 5종을
+      <b>다리 노드</b>로 함께 그린 것입니다. 두 화면은 같은 데이터 파일을 읽으므로 내용이 어긋날 수 없습니다.</p>
+  </section>
+
+  <section>
+    <h2>사용법</h2>
+    <ul>
+      <li><b>노드 클릭</b> — 분포의 정의, 밀도함수, 모멘트를 보고 모수 슬라이더로 곡선을 조작합니다.</li>
+      <li><b>화살표 클릭</b> — 두 분포를 잇는 조건과 변환, 그리고 유도 과정을 단계별로 봅니다.</li>
+      <li><b>실선</b>은 변환·특수화, <b>점선</b>은 극한 관계입니다. 색이 아니라 선 스타일로 구분합니다.</li>
+      <li><b>곡선 고정</b>으로 최대 3개까지 겹쳐 두고 모수를 바꿔 비교할 수 있습니다.</li>
+      <li><b>경로 찾기</b>로 임의의 두 분포를 잇는 최단 경로와 그 변환들을 확인할 수 있습니다.</li>
+      <li><b>시뮬레이션</b> — 27개 관계(연속 21, 이산 6)에는 몬테카를로 데모가 붙어 있어, 변환이 실제로 그 분포를 만드는지 눈으로 확인할 수 있습니다.</li>
+      <li><b>이산 관계도</b> — 이산분포는 곡선이 아니라 <b>막대(PMF)</b>와 <b>계단(CDF)</b>으로 그립니다.
+        점선 테두리의 노드는 이산 쪽에서 도달하는 연속분포(다리 노드)입니다.</li>
+      <li><b>학습 경로</b> — 처음이라면 상단의 학습 경로 세 가지 중 하나를 따라가 보세요.</li>
+      <li><b>검색·필터</b> — 분포명으로 찾거나, 관계 유형·지지집합으로 걸러 볼 수 있습니다.</li>
+      <li>주소창의 <code>#/node/gamma</code>, <code>#/edge/E7</code> 로 특정 항목에 바로 접근할 수 있습니다.</li>
+    </ul>
+  </section>
+
+  <section class="highlight">
+    <h2>표기 규약 — 감마 계열은 rate 모수화</h2>
+    <p>이 사이트는 감마·지수·카이제곱 계열에 <b>rate 모수화</b>를 씁니다.</p>
+    <div class="tex-block" data-tex="f(x) = \frac{\lambda^{r}}{\Gamma(r)}x^{r-1}e^{-\lambda x},\quad x>0,\ r>0,\ \lambda>0"></div>
+    <div class="tex-block" data-tex="E(X) = \frac{r}{\lambda},\qquad \mathrm{Var}(X) = \frac{r}{\lambda^{2}},\qquad M(t) = \left(1-\frac{t}{\lambda}\right)^{-r}"></div>
+    <p><b>교재마다 다릅니다.</b> scale 모수화를 쓰는 교재에서는 평균이 <span class="tex-inline"
+      data-tex="r\theta"></span> 로 표기되는데, 두 표기는 다음으로 대응합니다.</p>
+    <div class="tex-block" data-tex="\theta = \frac{1}{\lambda}"></div>
+    <p class="muted">즉 이 사이트의 <span class="tex-inline" data-tex="\mathrm{Gamma}(r,\lambda=2)"></span> 는
+      scale 표기 교재의 <span class="tex-inline" data-tex="\mathrm{Gamma}(r,\theta=0.5)"></span> 와 같은 분포입니다.
+      분포 패널의 <span class="badge badge-rate">rate 모수화</span> 배지를 클릭하면 같은 안내가 나옵니다.</p>
+  </section>
+
+  <section class="highlight">
+    <h2>표기 규약 — 기하·음이항은 “시행 횟수”</h2>
+    <p>기하분포와 음이항분포는 교재마다 지지집합이 다릅니다. 이 사이트는 <b>시행 횟수</b> 규약을 씁니다.</p>
+    <div class="tex-block" data-tex="X \sim \mathrm{Geom}(p):\quad P(X=k) = (1-p)^{k-1}p,\quad k = 1,2,3,\dots,\qquad E(X) = \frac{1}{p}"></div>
+    <div class="tex-block" data-tex="X \sim \mathrm{NB}(r,p):\quad P(X=k) = \binom{k-1}{r-1}p^{r}(1-p)^{k-r},\quad k = r,r+1,\dots,\qquad E(X) = \frac{r}{p}"></div>
+    <p>즉 <span class="tex-inline" data-tex="X"></span> 는 <b>첫 성공(또는 r번째 성공)이 나올 때까지 던진 횟수</b>이며,
+      성공이 나온 그 시행까지 포함해 셉니다. 지지집합이 1부터(음이항은 r부터) 시작합니다.</p>
+    <p><b>“실패 횟수” 규약을 쓰는 교재</b>에서는 같은 분포를
+      <span class="tex-inline" data-tex="Y = X - r"></span> (기하는 <span class="tex-inline" data-tex="Y = X-1"></span>)
+      로 두어 지지집합이 0부터 시작하고 평균이 <span class="tex-inline" data-tex="r(1-p)/p"></span> 가 됩니다.
+      분산과 분포의 모양은 같고 <b>위치만 다릅니다.</b></p>
+    <p class="muted">시행 횟수 규약을 택한 이유는 이 관계도의 두 관계가 이 규약에서만 덧셈으로 깔끔하게 떨어지기 때문입니다.
+      <span class="tex-inline" data-tex="\mathrm{NB}(r,p)"></span> 가
+      <span class="tex-inline" data-tex="\mathrm{Geom}(p)"></span> 를 <span class="tex-inline" data-tex="r"></span> 개 더한 것이 되고,
+      <span class="tex-inline" data-tex="r=1"></span> 이면 그대로 기하분포가 됩니다.
+      또 <span class="tex-inline" data-tex="pX \to \mathrm{Exp}(1)"></span> 이라는 극한이 상수 보정 없이 성립합니다.</p>
+  </section>
+
+  <section>
+    <h2>이산분포의 다른 표기</h2>
+    <ul>
+      <li><b>초기하분포</b>는 <span class="tex-inline" data-tex="\mathrm{HG}(N, K, n)"></span> — 크기 <span class="tex-inline" data-tex="N"></span> 의 모집단에
+        성공 원소가 <span class="tex-inline" data-tex="K"></span> 개 있고 <span class="tex-inline" data-tex="n"></span> 개를 비복원추출할 때의 성공 개수입니다.
+        <span class="tex-inline" data-tex="M"></span> 이나 <span class="tex-inline" data-tex="D"></span> 로 쓰는 교재도 있습니다.</li>
+      <li><b>이산균등분포</b>는 <span class="tex-inline" data-tex="\mathrm{DU}(a,b)"></span> — 정수 <span class="tex-inline" data-tex="a, a+1, \dots, b"></span> 를 같은 확률로 취합니다.</li>
+      <li><b>정규근사</b>(De Moivre–Laplace 등)에는 <b>연속성 보정</b> <span class="tex-inline" data-tex="\pm 0.5"></span> 를 함께 표시합니다.
+        보정 없이 비교하면 <span class="tex-inline" data-tex="n"></span> 이 작을 때 눈에 띄게 어긋납니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>참조 다이어그램과의 대조</h2>
+    <p>이 사이트는 제공받은 분포 관계 다이어그램을 출발점으로 삼았습니다. 처음에는 연속분포 부분만
+      옮겼으나, 참조 다이어그램 전체를 다시 대조해 <b>이산분포 6종</b>(베르누이·이항·초기하·기하·음이항·포아송)과
+      <b>연속분포 3종</b>(코시·와이블·이중지수), 그리고 이들을 잇는 관계를 전체 관계도에 모두 채워 넣었습니다.
+      이산균등분포와 이산 쪽 보강 관계 8개는 참조 다이어그램에 없는 추가분이라
+      전체 관계도에서는 <b>확장</b> 토글로 켜야 보이고, 이산 관계도에서는 처음부터 보입니다.</p>
+    <p>옮기는 과정에서 발견한 표기 문제는 아래와 같이 바로잡았습니다.</p>
+    <table class="fix-table">
+      <thead><tr><th>관계</th><th>원본 표기</th><th>이 사이트</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><a href="index.html#/edge/E5">E5</a></td>
+          <td class="tex-cell" data-tex="\frac{X-\mu}{\sigma^2}"></td>
+          <td class="tex-cell" data-tex="\frac{X-\mu}{\sigma}"></td>
+          <td><span class="tex-inline" data-tex="\sigma^2"></span> 로 나누면 분산이
+            <span class="tex-inline" data-tex="1/\sigma^2"></span> 이 되어 표준정규가 되지 않습니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E8">E8</a></td>
+          <td class="tex-cell" data-tex="r=\tfrac{1}{2},\ \lambda=\tfrac{1}{2}"></td>
+          <td class="tex-cell" data-tex="r=\tfrac{m}{2},\ \lambda=\tfrac{1}{2}"></td>
+          <td>원본 표기는 <span class="tex-inline" data-tex="\chi^2(1)"></span> 한 경우에만 해당합니다.
+            일반형은 <span class="tex-inline" data-tex="r=m/2"></span> 입니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E10">E10</a></td>
+          <td class="tex-cell" data-tex="\min(x_i)\ \to\ \mathrm{Exp}(\lambda)"></td>
+          <td class="tex-cell" data-tex="\min(x_i)\sim\mathrm{Exp}(n\lambda)"></td>
+          <td>후보가 <span class="tex-inline" data-tex="n"></span> 개면 첫 사건이 평균
+            <span class="tex-inline" data-tex="1/n"></span> 배 빨리 옵니다. 결과 모수가 달라집니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/D8">D8</a> · <a href="index.html#/edge/E8">E8</a></td>
+          <td class="tex-cell" data-tex="\mathrm{Exp}(\lambda)\to\chi^2:\ \lambda=2"></td>
+          <td class="tex-cell" data-tex="\lambda=\tfrac{1}{2}"></td>
+          <td>rate 모수화에서 <span class="tex-inline" data-tex="\chi^2(2)=\mathrm{Exp}(1/2)"></span> 입니다.
+            원본의 <span class="tex-inline" data-tex="\lambda=2"></span> 는 scale 해석입니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/D20">D20</a></td>
+          <td class="tex-cell" data-tex="\lambda = n(1-p),\ n\to\infty"></td>
+          <td class="tex-cell" data-tex="X-r,\ r\to\infty,\ \lambda=\tfrac{r(1-p)}{p}"></td>
+          <td>이 사이트의 음이항은 <b>시행 횟수</b> 규약이라 지지집합이 r부터 시작합니다.
+            포아송으로 가려면 성공 횟수 r을 빼서 실패 횟수로 옮겨야 하고, 그때의 평균이
+            <span class="tex-inline" data-tex="r(1-p)/p"></span> 입니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E23">E23</a></td>
+          <td class="tex-cell" data-tex="\mu = r\lambda,\ \sigma^2 = r\lambda^2"></td>
+          <td class="tex-cell" data-tex="\mu = r/\lambda,\ \sigma^2 = r/\lambda^2"></td>
+          <td>원본 표기는 scale 모수화입니다. 다른 세 엣지가 이미 rate 이므로 rate 로 통일했습니다.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="muted">원본에서 <span class="tex-inline" data-tex="\lambda"></span> 가 두 가지 의미로 쓰이고 있었습니다.
+      E23만 scale 해석이고 E8·E13·E14는 rate 해석이었습니다. 첨부된 감마 밀도함수 그래프
+      (<span class="tex-inline" data-tex="r=1,4,8"></span>)를 수치로 검증한 결과 rate
+      <span class="tex-inline" data-tex="\lambda=2"></span> 와 정확히 일치했으므로 rate 로 확정했습니다.
+      확인한 값: <span class="tex-inline" data-tex="r=1"></span> 의
+      <span class="tex-inline" data-tex="f(0)=2.0"></span>,
+      <span class="tex-inline" data-tex="r=4"></span> 의 최빈값 1.5 (높이 0.448),
+      <span class="tex-inline" data-tex="r=8"></span> 의 최빈값 3.5 (높이 0.298).
+      분포 패널의 <b>교재 그림</b> 프리셋으로 재현할 수 있습니다.</p>
+  </section>
+
+  <section>
+    <h2>보강한 관계</h2>
+    <p>참조 다이어그램에 없었으나 교육적으로 필요해 추가한 관계가 있습니다. 관계도에서는
+      <span class="badge badge-aug">보강</span> 배지로 구분합니다. 연속 쪽 여섯 중 E26·E27은 구조적으로 꼭 필요해
+      항상 표시하고, 나머지 넷은 툴바의 <b>확장</b> 토글로 켜고 끌 수 있습니다 —
+      특히 E30·E31은 화면을 가로지르는 긴 선이라 기본은 숨김입니다.</p>
+    <p>이산 쪽에도 여덟을 보강했습니다 — 이항의 자기합(D3), 베르누이에서 기하로(D4),
+      음이항→정규(D13), 기하→지수(D14), 포아송→지수(D15), 포아송→감마(D16), 음이항→감마(D17),
+      이항↔베타의 CDF 쌍대성(D18). 전체 관계도에서는 선이 길어 기본 숨김이고,
+      <b>이산 관계도</b>에서는 처음부터 보입니다.</p>
+    <table class="fix-table">
+      <thead><tr><th>관계</th><th>내용</th><th>추가 이유</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><a href="index.html#/edge/E26">E26</a></td>
+          <td class="tex-cell" data-tex="Z^2 \sim \chi^2(1)"></td>
+          <td>카이제곱분포의 정의 그 자체입니다. 이것이 없으면 정규 계열과 표본분포 계열이
+            감마를 거쳐서만 연결되어, <span class="tex-inline" data-tex="\sum Z_i^2\sim\chi^2(n)"></span>
+            이라는 가장 기본적인 사실에 도달할 수 없습니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E27">E27</a></td>
+          <td class="tex-cell" data-tex="T = Z/\sqrt{V/n}"></td>
+          <td>t 분포의 정의입니다. 원본에는 <span class="tex-inline" data-tex="t(n)"></span> 으로
+            <b>들어오는 화살표가 하나도 없어</b> 고아 노드였습니다. 이 상태로는 "t 분포가 어디서 오는가"에
+            답할 수 없습니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E28">E28</a></td>
+          <td class="tex-cell" data-tex="1-X \sim \mathrm{Beta}(\beta,\alpha)"></td>
+          <td>베타분포의 대칭성. <span class="tex-inline" data-tex="\alpha=\beta"></span> 일 때 분포가
+            좌우대칭인 이유가 여기서 나옵니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E29">E29</a></td>
+          <td class="tex-cell" data-tex="1/X \sim F(r_2, r_1)"></td>
+          <td>F 분포표에 상위 분위수만 실려 있어도 하위 분위수를 구할 수 있는 근거입니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E30">E30</a> <span class="badge">확장</span></td>
+          <td class="tex-cell" data-tex="\tfrac{r_2}{r_1}\tfrac{X}{1-X} \sim F(r_1,r_2)"></td>
+          <td>베타와 F 는 같은 대상을 유계 구간과 반직선이라는 두 좌표로 본 것입니다.
+            오즈를 취하면 분모의 합이 상쇄되어 두 카이제곱의 순수한 비가 남습니다.</td>
+        </tr>
+        <tr>
+          <td><a href="index.html#/edge/E31">E31</a> <span class="badge">확장</span></td>
+          <td class="tex-cell" data-tex="\Phi(Z) \sim U(0,1)"></td>
+          <td>확률적분변환. 어떤 연속분포든 자기 CDF를 씌우면 균등분포가 됩니다. 표준정규를 대표
+            사례로 그렸을 뿐이며, E14도 같은 정리의 사례이고 역방향으로 읽으면 E13의 역변환
+            표본추출이 됩니다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>중심극한정리를 엣지로 그리지 않은 이유</h2>
+    <p>중심극한정리는 두 분포를 잇는 화살표가 아닙니다. 유한한 분산을 갖는 <b>모든</b> 분포에 동시에
+      적용되는 진술이므로, 엣지로 그리면 11개 노드 각각에서 정규분포로 향하는 화살표가 생겨
+      관계도가 읽히지 않습니다. 게다가 CLT는 확률변수를 다른 확률변수로 바꾸는 변환이 아니라,
+      <b>표본평균이라는 새로 정의한 통계량</b>의 극한 분포에 대한 진술이라 다른 27개 관계와 논리적 층위가
+      다릅니다.</p>
+    <p>그래서 <a href="clt.html">독립 화면</a>으로 만들고, 모든 분포 패널과
+      <a href="index.html#/edge/E23">E23</a>·<a href="index.html#/edge/E22">E22</a> 에서 진입 링크를 두었습니다.
+      정수 <span class="tex-inline" data-tex="r"></span> 에 대해
+      <span class="tex-inline" data-tex="\mathrm{Gamma}(r,\lambda)"></span> 는 독립 지수확률변수
+      <span class="tex-inline" data-tex="r"></span> 개의 합이므로, E23은 사실상 중심극한정리 그 자체입니다.</p>
+  </section>
+
+  <section>
+    <h2>수치 계산과 검증</h2>
+    <p>모든 확률밀도·누적분포 함수는 외부 라이브러리 없이 직접 구현했습니다. 감마·베타 계열은
+      Lanczos 근사와 수정 Lentz 연분수를, 정규 계열은 Chebyshev 유리함수 근사를 씁니다.
+      모든 밀도함수는 로그 스케일에서 계산한 뒤 지수를 취해 오버플로를 피합니다.</p>
+    <p>정확도는 R의 <code>p*</code> 함수(또는 scipy)로 만든 참조값과 대조해 검증합니다.
+      기준은 상대오차 <span class="tex-inline" data-tex="10^{-6}"></span> 이내입니다.</p>
+    <ul>
+      <li><a href="test/numeric.html">수치 라이브러리 검증</a> — CDF 정확도, 밀도 적분, PDF·CDF 정합, 극단 모수, 샘플러, PRNG</li>
+      <li><a href="test/data.html">데이터 정합성 검사</a> — 노드·엣지 정합성과 전체 목록</li>
+      <li><a href="test/clt.html">CLT 시뮬레이터 검증</a> — 수용 기준 7종</li>
+      <li><a href="test/sim.html">시뮬레이션 레시피 검증</a> — 연속 21개 변환의 KS 검정</li>
+      <li><a href="test/discrete.html">이산분포 검증</a> — PMF·CDF 정확도, 샘플러 카이제곱, 이산 관계 6종의 KS 검정</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>기술 사항</h2>
+    <ul>
+      <li>빌드 스텝이 없는 정적 사이트입니다. ES2022 모듈을 브라우저가 그대로 실행합니다.</li>
+      <li>그래프는 순수 SVG로 그립니다. D3를 포함한 어떤 그래프 라이브러리도 쓰지 않습니다.</li>
+      <li>수식은 KaTeX이며 <code>vendor/</code> 에 self-host 되어 있습니다. 외부 CDN을 쓰지 않으므로
+        <b>네트워크 없이도 전 기능이 동작합니다.</b></li>
+      <li>브라우저 저장소를 쓰지 않습니다. 상태는 메모리와 URL 해시로만 표현합니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>라이선스</h2>
+    <p>코드 MIT · 콘텐츠 CC BY 4.0</p>
+  </section>
+</main>
+
+<script type="module">
+import { renderTex } from './js/util/latex.js';
+function paint() {
+  document.querySelectorAll('[data-tex]').forEach((el) => {
+    renderTex(el.dataset.tex, el, { display: el.classList.contains('tex-block') });
+  });
+}
+if (window.katex) paint(); else window.addEventListener('load', paint);
+</script>
+</body>
+</html>

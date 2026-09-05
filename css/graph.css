@@ -1,0 +1,190 @@
+/* 관계도 레이아웃과 SVG 스타일 */
+
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+.topbar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 9px 16px; border-bottom: 1px solid var(--line); background: var(--surface);
+}
+.topbar h1 { font-size: 15px; }
+.topbar .sub { color: var(--muted); font-size: 12.5px; }
+.topbar .spacer { flex: 1; }
+.topbar nav { display: flex; gap: 6px; }
+.topbar nav a {
+  text-decoration: none; color: var(--muted); font-size: 13px;
+  padding: 4px 9px; border-radius: 6px;
+}
+.topbar nav a:hover { background: var(--surface-2); color: var(--fg); }
+.topbar nav a.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+.main { display: flex; flex: 1; min-height: 0; }
+.graph-pane {
+  position: relative; flex: 1 1 62%; min-width: 0;
+  display: flex; flex-direction: column; background: var(--bg);
+}
+.panel-pane {
+  flex: 0 0 38%; max-width: 520px; min-width: 340px;
+  border-left: 1px solid var(--line); background: var(--surface);
+  overflow-y: auto; padding: 18px 20px 40px;
+}
+body.panel-collapsed .panel-pane { display: none; }
+
+#pathbar {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: 13px;
+  background: var(--surface);
+}
+#pathbar label { color: var(--muted); font-weight: 600; }
+#path-result { padding: 0 14px; font-size: 12.5px; }
+.path-steps { margin: 8px 0; padding-left: 18px; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.path-step {
+  display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line);
+  background: var(--surface); border-radius: 6px; padding: 3px 9px; cursor: pointer;
+  font: inherit; font-size: 12.5px; color: var(--fg);
+}
+.path-step:hover { border-color: var(--accent); }
+.path-num { font-weight: 700; color: var(--accent); font-size: 11.5px; }
+.path-tex { color: var(--muted); }
+.path-warn { color: var(--warn); font-size: 11px; }
+
+.graph-wrap { flex: 1; min-height: 0; position: relative; }
+.graph-svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.graph-svg.dragging { cursor: grabbing; }
+
+#legend {
+  position: absolute; top: 10px; right: 12px; display: flex; gap: 12px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px;
+  font-size: 11.5px; color: var(--muted); backdrop-filter: blur(4px);
+}
+.lg { display: inline-flex; align-items: center; gap: 5px; }
+.lg-line { width: 18px; height: 0; border-top: 2px solid var(--edge); display: inline-block; }
+.lg-dash { border-top-style: dashed; border-color: var(--edge-limit); }
+.lg-dot {
+  width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  border: 2px solid var(--fam-gamma);
+}
+
+.graph-tools { position: absolute; bottom: 12px; left: 12px; display: flex; gap: 6px; }
+
+/* ── 노드 ──────────────────────────────────────────────────────────────── */
+.node { cursor: pointer; }
+.node .node-box {
+  fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2;
+  transition: fill .12s, stroke .12s;
+}
+.node-normal  .node-box { fill: var(--fam-normal-bg);  stroke: var(--fam-normal); }
+.node-gamma   .node-box { fill: var(--fam-gamma-bg);   stroke: var(--fam-gamma); }
+.node-uniform .node-box { fill: var(--fam-uniform-bg); stroke: var(--fam-uniform); }
+.node-ratio   .node-box { fill: var(--fam-ratio-bg);   stroke: var(--fam-ratio); }
+.node-label-fo { pointer-events: none; overflow: visible; }
+.node-label {
+  display: flex; align-items: center; justify-content: center;
+  height: 30px; font-size: 13px; color: var(--fg);
+}
+.node:hover .node-box, .node:focus .node-box { stroke-width: 2.2; }
+.node.selected .node-box { stroke: var(--accent); stroke-width: 2.6; }
+.node.dim { opacity: .2; }
+.node.on-path .node-box { stroke: var(--accent); stroke-width: 2.6; }
+.node:focus { outline: none; }
+.node:focus .node-box { stroke-dasharray: 4 2; }
+
+/* ── 엣지 ──────────────────────────────────────────────────────────────── */
+.edge { cursor: pointer; }
+.edge-hit { stroke: transparent; stroke-width: 14; }
+.edge-line { stroke: var(--edge); stroke-width: 1.5; transition: stroke-width .12s; }
+.edge-limit .edge-line { stroke: var(--edge-limit); stroke-dasharray: 6 4; }
+.edge-augmented .edge-line { stroke: var(--fam-gamma); }
+.edge-binary-dot { fill: var(--fam-gamma); }
+.edge-binary-ring { stroke: var(--fam-gamma); stroke-width: 1.2; }
+.edge:hover .edge-line, .edge:focus .edge-line { stroke-width: 3; stroke: var(--accent); }
+.edge.selected .edge-line { stroke: var(--accent); stroke-width: 3; }
+.edge.dim { opacity: .12; }
+.edge.on-path .edge-line { stroke: var(--accent); stroke-width: 3; }
+.edge:focus { outline: none; }
+
+.edge-label-fo { overflow: visible; pointer-events: none; }
+.edge-label {
+  display: flex; align-items: center; justify-content: center; height: 30px;
+  font-size: 10.5px; color: var(--muted);
+}
+.edge-label .katex {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  padding: 1px 3px; border-radius: 3px;
+}
+.edge-label-fo.dim { opacity: .1; }
+
+.graph-svg.has-focus .edge-label-fo:not(.dim) .edge-label { color: var(--fg); }
+
+/* ── 툴바 · 필터 (F5) ────────────────────────────────────────────────────── */
+#toolbar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 8px 14px; border-bottom: 1px solid var(--line);
+  background: var(--surface); font-size: 13px;
+}
+.tb-group { display: flex; align-items: center; gap: 7px; }
+.tb-group > label:first-child { color: var(--muted); font-weight: 600; white-space: nowrap; }
+.tb-search input {
+  font: inherit; font-size: 13px; padding: 4px 9px; border-radius: 6px; min-width: 220px;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--fg);
+}
+.tb-count { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+#toolbar .spacer { flex: 1; }
+
+.node.filtered-out, .edge.filtered-out, .edge-label-fo.filtered-out {
+  opacity: .05; pointer-events: none;
+}
+.graph-svg.filtering .node:not(.filtered-out) .node-box { stroke-width: 2; }
+.node.search-hit .node-box { stroke: var(--accent); stroke-width: 2.6; }
+.graph-svg.hide-labels .edge-label-fo { display: none; }
+
+/* ── 학습 경로 (F6) ──────────────────────────────────────────────────────── */
+#tourbar { padding: 7px 14px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.tour-menu { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.btn-tour {
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  text-align: left; line-height: 1.35; padding: 5px 11px;
+}
+.btn-tour b { font-size: 12.5px; }
+.tour-sub { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+#tour { padding: 0 14px; }
+.tour-bar {
+  background: var(--accent-soft); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 11px 15px; margin: 9px 0;
+}
+.tour-meta { display: flex; align-items: baseline; gap: 10px; }
+.tour-name { font-size: 11.5px; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+.tour-count { margin-left: auto; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tour-progress { height: 3px; background: var(--line); border-radius: 2px; margin: 7px 0 9px; overflow: hidden; }
+.tour-progress i { display: block; height: 100%; background: var(--accent); transition: width .2s; }
+.tour-step-title { font-size: 14.5px; display: flex; align-items: baseline; gap: 8px; }
+.tour-kind {
+  font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 99px;
+  background: var(--surface); color: var(--muted); border: 1px solid var(--line);
+}
+.tour-kind-node { color: var(--fam-normal); }
+.tour-kind-edge { color: var(--fam-ratio); }
+.tour-body { font-size: 13px; line-height: 1.75; margin: 6px 0 10px; }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-actions .spacer { flex: 1; }
+.tour-actions button[disabled] { opacity: .45; cursor: default; }
+
+@media (max-width: 767px) {
+  #toolbar { gap: 10px; font-size: 12px; }
+  .tb-search input { min-width: 130px; }
+  .tb-group > label:first-child { display: none; }
+}
+.node.search-near .node-box { stroke-dasharray: none; opacity: .75; }
+
+/* ── 이산 관계도 ─────────────────────────────────────────────────────────── */
+.node-discrete .node-box { stroke-width: 2; }
+/* 연속 쪽으로 건너가는 다리 — 점선 테두리로 "여기부터는 연속" 을 표시한다 */
+.node-bridge .node-box { stroke-dasharray: 5 3; fill: var(--surface); }
+.node-bridge .node-label { color: var(--muted); }
+.node-bernoulli .node-box { fill: var(--fam-normal-bg); stroke: var(--fam-normal); }
+.node-waiting  .node-box { fill: var(--fam-gamma-bg);  stroke: var(--fam-gamma); }
+.node-count    .node-box { fill: var(--fam-ratio-bg);  stroke: var(--fam-ratio); }
+.lg-box { width: 13px; height: 10px; border-radius: 3px; display: inline-block;
+  border: 2px solid var(--fam-normal); background: var(--fam-normal-bg); }
+.lg-box-b { border-style: dashed; border-color: var(--muted-line); background: var(--surface); }

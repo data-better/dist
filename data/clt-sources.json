@@ -1,0 +1,37 @@
+[
+  {
+    "id": "bimodal",
+    "nameKo": "양봉 혼합 (교육용)",
+    "notation": "\\tfrac{1}{2}N(-2,\\,0.25)+\\tfrac{1}{2}N(2,\\,0.25)",
+    "extra": true,
+    "mean": 0,
+    "variance": 4.25,
+    "skewness": 0,
+    "pdfKind": "mixture",
+    "noteKo": "정규분포와 전혀 닮지 않은 출발점이다. 봉우리가 둘인데도 표본평균은 정규로 모인다.",
+    "xRange": [-5, 5]
+  },
+  {
+    "id": "skewed",
+    "nameKo": "극단 왜도 (교육용)",
+    "notation": "\\mathrm{Gamma}(r=0.5,\\ \\lambda=1)",
+    "extra": true,
+    "baseDist": "gamma",
+    "baseParams": { "r": 0.5, "lambda": 1 },
+    "noteKo": "왜도가 약 2.83으로 매우 크다. n=30에서도 정규에 충분히 가까워지지 않는다.",
+    "xRange": [0, 6]
+  },
+  {
+    "id": "dice",
+    "nameKo": "이산 균등 · 주사위 (교육용)",
+    "notation": "P(X=k)=\\tfrac{1}{6},\\ k=1,\\dots,6",
+    "extra": true,
+    "discrete": true,
+    "mean": 3.5,
+    "variance": 2.9166666666666665,
+    "skewness": 0,
+    "pdfKind": "dice",
+    "noteKo": "중심극한정리는 연속분포만의 이야기가 아니다. 이산분포에서도 그대로 성립한다.",
+    "xRange": [0.5, 6.5]
+  }
+]

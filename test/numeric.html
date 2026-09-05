@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>수치 라이브러리 검증 — distribution</title>
+<link rel="stylesheet" href="test.css">
+</head>
+<body>
+<h1>수치 라이브러리 검증</h1>
+<p class="lead">PRD §7.4 수용 기준. 수치 코드를 수정할 때마다 이 페이지를 다시 확인한다.</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+
+<script type="module">
+import { pdf } from '../js/distributions/pdf.js';
+import { cdf } from '../js/distributions/cdf.js';
+import { getMoments } from '../js/distributions/moments.js';
+import { createRng, getSampler } from '../js/distributions/sample.js';
+import { tanhSinh, tanhSinhHalfLine, tanhSinhLine } from './quadrature.js';
+
+const out = document.getElementById('out');
+const results = [];
+
+function section(title, note) {
+  const s = document.createElement('section');
+  s.innerHTML = `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}`;
+  out.appendChild(s);
+  return s;
+}
+function table(parent, head, rows) {
+  const t = document.createElement('table');
+  t.innerHTML = `<thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead>`
+    + `<tbody>${rows.map((r) => `<tr class="${r.pass ? 'ok' : 'bad'}">`
+      + r.cells.map((c) => `<td>${c}</td>`).join('') + '</tr>').join('')}</tbody>`;
+  parent.appendChild(t);
+}
+function record(id, pass, detail) { results.push({ id, pass, detail }); }
+const fmt = (v, d = 6) => (Number.isFinite(v) ? v.toPrecision(d) : String(v));
+
+// ── A. CDF 정확도 ─────────────────────────────────────────────────────────
+async function testA() {
+  const s = section('A. CDF 정확도', '참조값(R의 p* 함수 또는 scipy) 대비 상대오차 &lt; 1e-6');
+  let ref;
+  try {
+    ref = await (await fetch('reference.json')).json();
+  } catch (e) {
+    s.insertAdjacentHTML('beforeend',
+      '<p class="bad-box">reference.json 을 읽지 못했습니다. '
+      + '<code>Rscript tools/make_reference.R</code> 또는 <code>python3 tools/make_reference.py</code> 를 먼저 실행하고, '
+      + 'file:// 이 아니라 <code>python3 -m http.server</code> 로 여세요.</p>');
+    record('A', false, 'reference.json 없음');
+    return;
+  }
+  const rows = [];
+  let allPass = true;
+  for (const b of ref) {
+    const f = cdf[b.id];
+    let maxRel = 0, nonFinite = 0;
+    for (let i = 0; i < b.x.length; i++) {
+      const got = f(b.x[i], b.params);
+      if (!Number.isFinite(got)) { nonFinite++; continue; }
+      const rel = Math.abs(got - b.cdf[i]) / Math.max(Math.abs(b.cdf[i]), 1e-300);
+      if (rel > maxRel) maxRel = rel;
+    }
+    const pass = maxRel < 1e-6 && nonFinite === 0;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [b.id, JSON.stringify(b.params), b.x.length,
+      maxRel.toExponential(2), nonFinite, pass ? 'PASS' : 'FAIL'] });
+  }
+  table(s, ['분포', '모수', '점 수', '최대 상대오차', '비유한값', ''], rows);
+  record('A', allPass, `${ref.length}개 블록`);
+}
+
+// ── B. PDF 적분 ───────────────────────────────────────────────────────────
+// 형상모수가 0.1 미만인 극단 사례는 제외한다. 이 경우 확률질량이 경계로부터
+// 1e-100 이내에 몰려 배정밀도로는 적분점 자체를 표현할 수 없다(수치 한계이지 PDF 오류가 아니다).
+// 해당 사례는 D 항목(비유한값 없음)에서 다룬다.
+function testB() {
+  const s = section('B. PDF 적분', 'tanh-sinh 구적법으로 지지집합 위에서 적분 → 1 ± 1e-3. '
+    + '형상모수 &lt; 0.1 인 극단 사례는 배정밀도 한계로 제외(D에서 확인)');
+  const cases = [
+    ['normal', { mu: 1, sigma: 2 }, 'line'], ['stdnormal', {}, 'line'],
+    ['t', { n: 1 }, 'line'], ['t', { n: 5 }, 'line'], ['t', { n: 200 }, 'line'],
+    ['lognormal', { mu: 0, sigma: 1 }, 'half', 0], ['lognormal', { mu: 0, sigma: 3 }, 'half', 0],
+    ['gamma', { r: 0.5, lambda: 2 }, 'half', 0], ['gamma', { r: 4, lambda: 2 }, 'half', 0],
+    ['gamma', { r: 20, lambda: 1 }, 'half', 0],
+    ['exponential', { lambda: 2 }, 'half', 0],
+    ['chisq', { m: 1 }, 'half', 0], ['chisq', { m: 30 }, 'half', 0], ['chisq', { m: 500 }, 'half', 0],
+    ['f', { r1: 5, r2: 10 }, 'half', 0], ['f', { r1: 1, r2: 1 }, 'half', 0],
+    ['f', { r1: 10, r2: 50 }, 'half', 0],
+    ['beta', { alpha: 0.5, beta: 0.5 }, 'fin', 0, 1], ['beta', { alpha: 2, beta: 5 }, 'fin', 0, 1],
+    ['unif01', {}, 'fin', 0, 1], ['unifab', { a: -2, b: 3 }, 'fin', -2, 3],
+    ['cauchy', { x0: 0, gamma: 1 }, 'line'], ['cauchy', { x0: 2, gamma: 0.5 }, 'line'],
+    ['weibull', { a: 1, b: 0.7 }, 'half', 0], ['weibull', { a: 2, b: 3 }, 'half', 0],
+    ['dblexp', { lambda: 1 }, 'line'], ['dblexp', { lambda: 3 }, 'line'],
+  ];
+  const rows = []; let allPass = true;
+  for (const c of cases) {
+    const [id, p, kind] = c;
+    const f = (x) => pdf[id](x, p);
+    const I = kind === 'line' ? tanhSinhLine(f, 14)
+      : kind === 'half' ? tanhSinhHalfLine(f, c[3], 14)
+        : tanhSinh(f, c[3], c[4], 14);
+    const pass = Math.abs(I - 1) < 1e-3;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), fmt(I, 9), pass ? 'PASS' : 'FAIL'] });
+  }
+  table(s, ['분포', '모수', '∫f(x)dx', ''], rows);
+  record('B', allPass, `${cases.length}건`);
+}
+
+// ── C. PDF-CDF 정합 ───────────────────────────────────────────────────────
+function testC() {
+  const s = section('C. PDF−CDF 정합', 'CDF를 수치미분한 값이 PDF와 1e-4 이내로 일치하는가');
+  const cases = [
+    ['normal', { mu: 1, sigma: 2 }, -30, 32], ['stdnormal', {}, -12, 12],
+    ['lognormal', { mu: 0, sigma: 1 }, 1e-12, 1e4],
+    ['gamma', { r: 0.5, lambda: 2 }, 1e-12, 40], ['gamma', { r: 4, lambda: 2 }, 1e-12, 60],
+    ['gamma', { r: 20, lambda: 1 }, 1e-12, 200],
+    ['exponential', { lambda: 2 }, 1e-12, 60],
+    ['chisq', { m: 1 }, 1e-12, 100], ['chisq', { m: 30 }, 1e-12, 300],
+    ['beta', { alpha: 0.5, beta: 0.5 }, 1e-12, 1 - 1e-12],
+    ['beta', { alpha: 2, beta: 5 }, 1e-12, 1 - 1e-12],
+    ['t', { n: 1 }, -1e5, 1e5], ['t', { n: 5 }, -200, 200], ['t', { n: 200 }, -60, 60],
+    ['f', { r1: 5, r2: 10 }, 1e-12, 1e4], ['f', { r1: 1, r2: 1 }, 1e-12, 1e8],
+    ['cauchy', { x0: 0, gamma: 1 }, -1e5, 1e5], ['cauchy', { x0: 2, gamma: 0.5 }, -1e5, 1e5],
+    ['weibull', { a: 1, b: 0.7 }, 1e-12, 1e3], ['weibull', { a: 2, b: 3 }, 1e-12, 1e3],
+    ['dblexp', { lambda: 1 }, -200, 200],
+  ];
+  const rows = []; let allPass = true;
+  for (const [id, p, lo, hi] of cases) {
+    let maxDiff = 0;
+    for (const q of [0.1, 0.25, 0.5, 0.75, 0.9]) {
+      let a = lo, b = hi;
+      for (let k = 0; k < 200; k++) { const m = (a + b) / 2; if (cdf[id](m, p) < q) a = m; else b = m; }
+      const x = (a + b) / 2;
+      const h = Math.max(1e-6, Math.abs(x) * 1e-6);
+      const num = (cdf[id](x + h, p) - cdf[id](x - h, p)) / (2 * h);
+      const ana = pdf[id](x, p);
+      const d = Math.abs(num - ana) / Math.max(1, Math.abs(ana));
+      if (d > maxDiff) maxDiff = d;
+    }
+    const pass = maxDiff < 1e-4;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), maxDiff.toExponential(2), pass ? 'PASS' : 'FAIL'] });
+  }
+  table(s, ['분포', '모수', '최대 편차', ''], rows);
+  record('C', allPass, `${cases.length}건`);
+}
+
+// ── D. 극단 모수 ──────────────────────────────────────────────────────────
+function testD() {
+  const s = section('D. 극단 모수', 'NaN·Infinity 가 나오지 않는가 (지지집합 밖 포함)');
+  const ext = [
+    ['chisq', { m: 500 }], ['chisq', { m: 0.1 }],
+    ['t', { n: 1 }], ['t', { n: 500 }],
+    ['beta', { alpha: 0.01, beta: 0.01 }], ['beta', { alpha: 200, beta: 200 }],
+    ['gamma', { r: 0.05, lambda: 10 }], ['gamma', { r: 20, lambda: 0.1 }],
+    ['f', { r1: 1, r2: 1 }], ['f', { r1: 200, r2: 200 }],
+    ['lognormal', { mu: 0, sigma: 3 }], ['normal', { mu: 0, sigma: 0.01 }],
+    ['cauchy', { x0: 0, gamma: 0.01 }], ['cauchy', { x0: 0, gamma: 100 }],
+    ['weibull', { a: 0.1, b: 0.2 }], ['weibull', { a: 5, b: 6 }],
+    ['dblexp', { lambda: 0.1 }], ['dblexp', { lambda: 5 }],
+  ];
+  const xs = [-Infinity, -1e12, -1e6, -1, 0, 1e-12, 0.5, 1, 10, 100, 1e6, 1e12, Infinity, NaN];
+  const rows = []; let allPass = true;
+  for (const [id, p] of ext) {
+    let bad = 0;
+    for (const x of xs) {
+      const a = pdf[id](x, p), b = cdf[id](x, p);
+      if (!Number.isFinite(a)) bad++;
+      if (Number.isNaN(x) ? false : !Number.isFinite(b)) bad++;
+    }
+    const pass = bad === 0;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), xs.length * 2, bad, pass ? 'PASS' : 'FAIL'] });
+  }
+  table(s, ['분포', '모수', '검사 점', '비유한값', ''], rows);
+  record('D', allPass, `${ext.length}개 조합`);
+}
+
+// ── E. 샘플러 ─────────────────────────────────────────────────────────────
+function testE() {
+  const s = section('E. 샘플러', '10만 표본의 표본평균이 이론평균의 3 표준오차 이내, '
+    + '표본분산이 이론분산의 ±6% 이내. 평균·분산이 없는 t(1), t(2)는 제외');
+  const cases = [
+    ['normal', { mu: 1, sigma: 2 }], ['stdnormal', {}], ['lognormal', { mu: 0, sigma: 0.5 }],
+    ['gamma', { r: 0.5, lambda: 2 }], ['gamma', { r: 4, lambda: 2 }],
+    ['exponential', { lambda: 2 }], ['chisq', { m: 5 }],
+    ['beta', { alpha: 2, beta: 5 }], ['beta', { alpha: 0.5, beta: 0.5 }],
+    ['t', { n: 10 }], ['f', { r1: 10, r2: 20 }],
+    ['unif01', {}], ['unifab', { a: -2, b: 3 }],
+    ['weibull', { a: 1, b: 2 }], ['weibull', { a: 2, b: 0.8 }], ['dblexp', { lambda: 1.5 }],
+  ];
+  const N = 100000;
+  const rows = []; let allPass = true;
+  for (const [id, p] of cases) {
+    const m = getMoments(id, p);
+    if (m.mean === null || m.variance === null) continue;
+    const rng = createRng(20260904);
+    const smp = getSampler(id);
+    let sum = 0, sum2 = 0;
+    for (let i = 0; i < N; i++) { const v = smp(rng, p); sum += v; sum2 += v * v; }
+    const mean = sum / N;
+    const varr = (sum2 - N * mean * mean) / (N - 1);
+    const se = Math.sqrt(m.variance / N);
+    const okM = Math.abs(mean - m.mean) < 3 * se;
+    const okV = Math.abs(varr - m.variance) < 0.06 * m.variance;
+    const pass = okM && okV;
+    if (!pass) allPass = false;
+    rows.push({ pass, cells: [id, JSON.stringify(p), fmt(mean), fmt(m.mean),
+      fmt(varr), fmt(m.variance), pass ? 'PASS' : 'FAIL'] });
+  }
+  table(s, ['분포', '모수', '표본평균', '이론평균', '표본분산', '이론분산', ''], rows);
+  record('E', allPass, `${rows.length}건`);
+}
+
+// ── F. PRNG 재현성 ────────────────────────────────────────────────────────
+function testF() {
+  const s = section('F. PRNG 재현성', '같은 seed 로 두 번 뽑은 수열이 완전히 동일한가');
+  const a = createRng(42), b = createRng(42), c = createRng(43);
+  let same = true, diff = false;
+  for (let i = 0; i < 20000; i++) {
+    if (a() !== b()) same = false;
+  }
+  const d = createRng(42);
+  for (let i = 0; i < 100; i++) if (d() !== c()) diff = true;
+  const pass = same && diff;
+  table(s, ['검사', '결과', ''], [
+    { pass: same, cells: ['seed 42 두 수열 20,000개 동일', same ? '동일' : '불일치', same ? 'PASS' : 'FAIL'] },
+    { pass: diff, cells: ['seed 42 vs 43 상이', diff ? '상이' : '동일(문제)', diff ? 'PASS' : 'FAIL'] },
+  ]);
+  record('F', pass, '');
+}
+
+// ── 실행 ──────────────────────────────────────────────────────────────────
+(async function run() {
+  await testA();
+  testB(); testC(); testD(); testE(); testF();
+  const failed = results.filter((r) => !r.pass);
+  const el = document.getElementById('summary');
+  el.className = `summary ${failed.length ? 'bad' : 'ok'}`;
+  el.innerHTML = failed.length
+    ? `<strong>${failed.length}개 항목 FAIL</strong> — ${failed.map((f) => f.id).join(', ')}`
+    : `<strong>전 항목 PASS</strong> — ${results.map((r) => r.id).join(', ')} (${results.length}개 항목)`;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<title>데이터 정합성 검사 — distribution</title>
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="test.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+</head>
+<body>
+<h1>데이터 정합성 검사</h1>
+<p class="lead">PRD §5.3. 노드·엣지 데이터와 코드가 어긋나지 않는지 확인한다.</p>
+<div id="summary" class="summary running">실행 중…</div>
+<div id="out"></div>
+
+<script type="module">
+import { validateData } from '../js/util/validate.js';
+import { canParseTex, texToHtml } from '../js/util/latex.js';
+
+const out = document.getElementById('out');
+
+(async function run() {
+  const [dists, rels] = await Promise.all([
+    fetch('../data/distributions.json').then((r) => r.json()),
+    fetch('../data/relations.json').then((r) => r.json()),
+  ]);
+
+  // KaTeX 로드 대기
+  for (let i = 0; i < 40 && typeof window.katex === 'undefined'; i++) {
+    await new Promise((r) => setTimeout(r, 50));
+  }
+
+  const res = validateData(dists, rels, canParseTex);
+
+  out.insertAdjacentHTML('beforeend', '<h2>정합성 항목</h2>');
+  out.insertAdjacentHTML('beforeend', `<table><thead><tr><th>항목</th><th>결과</th><th>상세</th></tr></thead><tbody>${
+    res.checks.map((c) => `<tr class="${c.pass ? 'ok' : 'bad'}"><td>${c.nameKo}</td>`
+      + `<td>${c.pass ? 'PASS' : 'FAIL'}</td><td>${c.detail || '—'}</td></tr>`).join('')
+  }</tbody></table>`);
+
+  // 노드 요약
+  const deg = {};
+  for (const r of rels) { deg[r.from] = (deg[r.from] || 0) + 1; if (r.to !== r.from) deg[r.to] = (deg[r.to] || 0) + 1; }
+  out.insertAdjacentHTML('beforeend', `<h2>분포 ${dists.length}종</h2>`);
+  out.insertAdjacentHTML('beforeend', `<table><thead><tr><th>id</th><th>표기</th><th>이름</th>`
+    + `<th>계열</th><th>모수</th><th>연결 수</th><th>프리셋</th></tr></thead><tbody>${
+      dists.map((d) => `<tr class="ok"><td>${d.id}</td><td>${texToHtml(d.notation)}</td>`
+        + `<td>${d.nameKo}</td><td>${d.family}</td>`
+        + `<td>${(d.params || []).map((p) => p.symbol).join(', ') || '—'}</td>`
+        + `<td>${deg[d.id] || 0}</td><td>${(d.presets || []).length}</td></tr>`).join('')
+    }</tbody></table>`);
+
+  // 엣지 목록
+  const TYPE = { transform: '변환', special: '특수화', limit: '극한' };
+  out.insertAdjacentHTML('beforeend', `<h2>관계 ${rels.length}종</h2>`);
+  out.insertAdjacentHTML('beforeend', `<table><thead><tr><th>id</th><th>from → to</th><th>유형</th>`
+    + `<th>유도 단계</th><th>표시</th><th>요약</th></tr></thead><tbody>${
+      rels.map((r) => `<tr class="ok"><td>${r.id}</td><td>${r.from} → ${r.to}</td>`
+        + `<td>${TYPE[r.type]}</td>`
+        + `<td>${(r.derivation || []).length || (r.limitDemo ? '수렴시연' : 0)}</td>`
+        + `<td>${[r.isBinary ? '이항' : '', r.isAugmented ? '보강' : '', r.note ? '수정' : ''].filter(Boolean).join(' · ') || '—'}</td>`
+        + `<td>${r.summaryKo}</td></tr>`).join('')
+    }</tbody></table>`);
+
+  // 원본 다이어그램 대비 수정 사항
+  const notes = rels.filter((r) => r.note);
+  out.insertAdjacentHTML('beforeend', `<h2>원본 다이어그램 대비 수정 ${notes.length}건</h2>`);
+  out.insertAdjacentHTML('beforeend', `<table><thead><tr><th>id</th><th>수정 내용</th></tr></thead><tbody>${
+    notes.map((r) => `<tr class="ok"><td>${r.id}</td><td>${r.note}</td></tr>`).join('')
+  }</tbody></table>`);
+
+  const el = document.getElementById('summary');
+  const failed = res.checks.filter((c) => !c.pass);
+  el.className = `summary ${failed.length ? 'bad' : 'ok'}`;
+  el.innerHTML = failed.length
+    ? `<strong>${failed.length}개 항목 FAIL</strong> — ${failed.map((f) => f.nameKo).join(', ')}`
+    : `<strong>전 항목 PASS</strong> — 분포 ${dists.length}종, 관계 ${rels.length}종, 정합성 ${res.checks.length}개 항목`;
+})();
+</script>
+</body>
+</html>

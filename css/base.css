@@ -1,0 +1,187 @@
+/* 디자인 토큰과 공통 요소. 다크 모드는 토큰만 재정의한다. */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #fbfbfc;
+  --surface: #ffffff;
+  --surface-2: #f4f5f7;
+  --fg: #191c21;
+  --muted: #666e7a;
+  --muted-line: #b9c0ca;
+  --line: #e3e6ea;
+  --line-strong: #cbd1d9;
+
+  --accent: #2f6bd8;
+  --accent-soft: #e8f0fd;
+  --edge: #6f8bc4;
+  --edge-limit: #9aa6b8;
+
+  /* 분포 계열 색 — 색만으로 정보를 전달하지 않고 라벨을 항상 함께 쓴다 */
+  --fam-normal: #2f6bd8;
+  --fam-normal-bg: #eaf1fd;
+  --fam-gamma: #c2620f;
+  --fam-gamma-bg: #fdf0e3;
+  --fam-uniform: #1c7a52;
+  --fam-uniform-bg: #e6f5ee;
+  --fam-ratio: #7a3fb0;
+  --fam-ratio-bg: #f2ebfa;
+
+  --pin-1: #9aa6b8;
+  --pin-2: #b48ea0;
+  --pin-3: #8fae9c;
+  --pin-4: #a89a75;
+
+  --warn: #9a5b00;
+  --warn-bg: #fdf3e2;
+  --info-bg: #eef3fb;
+
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 14px rgba(16, 24, 40, .05);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR",
+    "Malgun Gothic", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --surface: #1b1e23;
+    --surface-2: #22262c;
+    --fg: #e7eaee;
+    --muted: #99a2ae;
+    --muted-line: #59626f;
+    --line: #2b3038;
+    --line-strong: #3a414b;
+
+    --accent: #74a4f7;
+    --accent-soft: #1c2a42;
+    --edge: #7f93bb;
+    --edge-limit: #6b7686;
+
+    --fam-normal: #74a4f7; --fam-normal-bg: #1a2740;
+    --fam-gamma: #e39a4e;  --fam-gamma-bg: #35271a;
+    --fam-uniform: #58bd90; --fam-uniform-bg: #142c22;
+    --fam-ratio: #b48ae4;  --fam-ratio-bg: #291c38;
+
+    --pin-1: #7d8798; --pin-2: #a37f90; --pin-3: #7d9c8b; --pin-4: #97895f;
+
+    --warn: #e0a75c; --warn-bg: #33281a; --info-bg: #1a2029;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14161a; --surface: #1b1e23; --surface-2: #22262c;
+  --fg: #e7eaee; --muted: #99a2ae; --muted-line: #59626f;
+  --line: #2b3038; --line-strong: #3a414b;
+  --accent: #74a4f7; --accent-soft: #1c2a42; --edge: #7f93bb; --edge-limit: #6b7686;
+  --fam-normal: #74a4f7; --fam-normal-bg: #1a2740;
+  --fam-gamma: #e39a4e;  --fam-gamma-bg: #35271a;
+  --fam-uniform: #58bd90; --fam-uniform-bg: #142c22;
+  --fam-ratio: #b48ae4;  --fam-ratio-bg: #291c38;
+  --pin-1: #7d8798; --pin-2: #a37f90; --pin-3: #7d9c8b; --pin-4: #97895f;
+  --warn: #e0a75c; --warn-bg: #33281a; --info-bg: #1a2029;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .3);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 14px/1.65 var(--font);
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3 { margin: 0; font-weight: 650; letter-spacing: -.01em; }
+p { margin: 0 0 10px; }
+a { color: var(--accent); }
+code {
+  background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+  font-size: .92em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.muted { color: var(--muted); }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ── 버튼·입력 ─────────────────────────────────────────────────────────── */
+.btn {
+  appearance: none; border: 1px solid var(--line-strong); background: var(--surface);
+  color: var(--fg); padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  font: inherit; font-size: 13px; line-height: 1.4;
+}
+.btn:hover { background: var(--surface-2); }
+.btn:focus-visible, .seg:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.btn-sm { padding: 4px 9px; font-size: 12.5px; }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--muted); }
+.btn-cta {
+  display: inline-block; margin-top: 14px; text-decoration: none;
+  background: var(--accent-soft); border-color: transparent; color: var(--accent);
+  font-weight: 600;
+}
+.btn-preset { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+
+.segmented { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
+.seg {
+  appearance: none; border: 0; background: var(--surface); color: var(--muted);
+  padding: 5px 12px; font: inherit; font-size: 12.5px; cursor: pointer;
+}
+.seg + .seg { border-left: 1px solid var(--line); }
+.seg.on { background: var(--accent); color: #fff; font-weight: 600; }
+
+select, input[type="number"] {
+  font: inherit; font-size: 13px; padding: 4px 7px; border-radius: 6px;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--fg);
+}
+input[type="range"] { accent-color: var(--accent); width: 100%; }
+
+.chk { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--muted); }
+
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11.5px;
+  font-weight: 600; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line);
+}
+.badge.type-transform { background: var(--fam-normal-bg); color: var(--fam-normal); border-color: transparent; }
+.badge.type-special { background: var(--fam-uniform-bg); color: var(--fam-uniform); border-color: transparent; }
+.badge.type-limit { background: var(--fam-ratio-bg); color: var(--fam-ratio); border-color: transparent; }
+.badge-aug { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
+.badge-rate { cursor: pointer; background: var(--fam-gamma-bg); color: var(--fam-gamma); border-color: transparent; }
+.badge-wrap { position: relative; }
+.badge-tip {
+  position: absolute; z-index: 20; top: 26px; right: 0; width: 300px;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius);
+  padding: 10px 12px; box-shadow: var(--shadow); font-size: 12.5px; line-height: 1.7;
+}
+
+.callout { padding: 9px 12px; border-radius: 6px; font-size: 13px; line-height: 1.6; }
+.callout-warn { background: var(--warn-bg); color: var(--warn); }
+.callout-info { background: var(--info-bg); color: var(--fg); }
+
+/* ── 플롯 ──────────────────────────────────────────────────────────────── */
+.plot { position: relative; margin: 10px 0 4px; }
+.plot-canvas { display: block; }
+.plot-axes { position: absolute; inset: 0; pointer-events: none; }
+.plot-axes .grid { stroke: var(--line); stroke-width: 1; }
+.plot-axes .axis { stroke: var(--line-strong); stroke-width: 1; }
+.plot-axes .cursor { stroke: var(--muted-line); stroke-width: 1; stroke-dasharray: 3 3; }
+.plot-axes .tick { fill: var(--muted); font-size: 10px; font-family: var(--font); }
+.plot-axes .tick-y { text-anchor: end; }
+.plot-axes .tick-x { text-anchor: middle; }
+.plot-tip {
+  position: absolute; background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: 5px; padding: 3px 8px; font-size: 12px; pointer-events: none;
+  box-shadow: var(--shadow); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.plot-legend { display: flex; flex-wrap: wrap; gap: 5px 8px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legend-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface-2); border-radius: 99px; padding: 2px 4px 2px 9px;
+}
+.legend-swatch { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend-current { color: var(--fg); font-weight: 600; }
+.legend-x {
+  border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 14px; line-height: 1; padding: 0 2px;
+}

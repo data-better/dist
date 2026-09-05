@@ -1,0 +1,1512 @@
+[
+  {
+    "id": "lognormal",
+    "notation": "\\mathrm{LN}(\\mu, \\sigma^2)",
+    "nameKo": "로그정규분포",
+    "nameEn": "Lognormal",
+    "family": "normal",
+    "position": {
+      "x": 170,
+      "y": 310
+    },
+    "params": [
+      {
+        "symbol": "mu",
+        "notation": "\\mu",
+        "nameKo": "로그평균",
+        "default": 0,
+        "min": -3,
+        "max": 3,
+        "step": 0.05
+      },
+      {
+        "symbol": "sigma",
+        "notation": "\\sigma",
+        "nameKo": "로그표준편차",
+        "default": 1,
+        "min": 0.05,
+        "max": 3,
+        "step": 0.05
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "(0, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{1}{x\\sigma\\sqrt{2\\pi}}\\exp\\!\\left(-\\frac{(\\ln x-\\mu)^2}{2\\sigma^2}\\right)",
+    "pdf": "lognormal",
+    "cdf": "lognormal",
+    "sampler": "lognormal",
+    "moments": {
+      "meanLatex": "e^{\\mu+\\sigma^2/2}",
+      "varianceLatex": "(e^{\\sigma^2}-1)e^{2\\mu+\\sigma^2}",
+      "mgfLatex": "\\text{존재하지 않음}"
+    },
+    "presets": [
+      {
+        "labelKo": "σ 비교 (μ=0, σ=0.25·0.5·1)",
+        "curves": [
+          {
+            "mu": 0,
+            "sigma": 0.25
+          },
+          {
+            "mu": 0,
+            "sigma": 0.5
+          },
+          {
+            "mu": 0,
+            "sigma": 1
+          }
+        ],
+        "xRange": [
+          0,
+          6
+        ]
+      }
+    ],
+    "descriptionKo": "로그를 취했을 때 정규분포가 되는 양수 확률변수의 분포다. 곱셈적으로 누적되는 현상, 즉 여러 요인이 더해지는 것이 아니라 곱해지며 결과를 만드는 상황을 모형화한다. 오른쪽으로 길게 늘어진 꼬리를 가지며 항상 양수 값만 취한다.",
+    "commonUseKo": "소득 분포, 주가 수익률, 생물의 크기처럼 배수로 변동하는 양을 다룰 때 등장한다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "normal",
+    "notation": "N(\\mu, \\sigma^2)",
+    "nameKo": "정규분포",
+    "nameEn": "Normal",
+    "family": "normal",
+    "position": {
+      "x": 470,
+      "y": 300
+    },
+    "params": [
+      {
+        "symbol": "mu",
+        "notation": "\\mu",
+        "nameKo": "평균",
+        "default": 0,
+        "min": -5,
+        "max": 5,
+        "step": 0.1
+      },
+      {
+        "symbol": "sigma",
+        "notation": "\\sigma",
+        "nameKo": "표준편차",
+        "default": 1,
+        "min": 0.1,
+        "max": 5,
+        "step": 0.05
+      }
+    ],
+    "support": {
+      "type": "line",
+      "lower": null,
+      "upper": null,
+      "latex": "(-\\infty, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}\\exp\\!\\left(-\\frac{(x-\\mu)^2}{2\\sigma^2}\\right)",
+    "pdf": "normal",
+    "cdf": "normal",
+    "sampler": "normal",
+    "moments": {
+      "meanLatex": "\\mu",
+      "varianceLatex": "\\sigma^2",
+      "mgfLatex": "\\exp(\\mu t + \\sigma^2 t^2/2)"
+    },
+    "presets": [
+      {
+        "labelKo": "σ 비교 (μ=0, σ=0.5·1·2)",
+        "curves": [
+          {
+            "mu": 0,
+            "sigma": 0.5
+          },
+          {
+            "mu": 0,
+            "sigma": 1
+          },
+          {
+            "mu": 0,
+            "sigma": 2
+          }
+        ],
+        "xRange": [
+          -8,
+          8
+        ]
+      }
+    ],
+    "descriptionKo": "좌우 대칭인 종 모양 분포로, 이 관계도의 중심 허브다. 독립인 확률변수를 많이 더할수록 그 합이 정규분포에 가까워지기 때문에(중심극한정리), 서로 다른 분포들이 결국 정규분포로 모인다. 평균이 위치를, 표준편차가 퍼짐을 결정한다.",
+    "commonUseKo": "표본평균의 근사분포, 측정오차 모형, 그리고 거의 모든 추론 이론의 출발점이다.",
+    "positionDiscrete": {
+      "x": 330,
+      "y": 500
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bridge": true
+  },
+  {
+    "id": "beta",
+    "notation": "\\mathrm{Beta}(\\alpha, \\beta)",
+    "nameKo": "베타분포",
+    "nameEn": "Beta",
+    "family": "uniform",
+    "position": {
+      "x": 740,
+      "y": 300
+    },
+    "params": [
+      {
+        "symbol": "alpha",
+        "notation": "\\alpha",
+        "nameKo": "형상모수 α",
+        "default": 2,
+        "min": 0.1,
+        "max": 20,
+        "step": 0.1
+      },
+      {
+        "symbol": "beta",
+        "notation": "\\beta",
+        "nameKo": "형상모수 β",
+        "default": 5,
+        "min": 0.1,
+        "max": 20,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "bounded",
+      "lower": 0,
+      "upper": 1,
+      "latex": "(0, 1)"
+    },
+    "pdfLatex": "f(x) = \\frac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha,\\beta)}",
+    "pdf": "beta",
+    "cdf": "beta",
+    "sampler": "beta",
+    "moments": {
+      "meanLatex": "\\frac{\\alpha}{\\alpha+\\beta}",
+      "varianceLatex": "\\frac{\\alpha\\beta}{(\\alpha+\\beta)^2(\\alpha+\\beta+1)}",
+      "mgfLatex": "{}_1F_1(\\alpha;\\alpha+\\beta;t)"
+    },
+    "presets": [
+      {
+        "labelKo": "모양 4종 (0.5,0.5)(1,1)(2,5)(5,5)",
+        "curves": [
+          {
+            "alpha": 0.5,
+            "beta": 0.5
+          },
+          {
+            "alpha": 1,
+            "beta": 1
+          },
+          {
+            "alpha": 2,
+            "beta": 5
+          },
+          {
+            "alpha": 5,
+            "beta": 5
+          }
+        ],
+        "xRange": [
+          0,
+          1
+        ],
+        "yRange": [
+          0,
+          3
+        ]
+      }
+    ],
+    "descriptionKo": "0과 1 사이 값을 갖는 확률변수의 분포로, '비율'이나 '확률 그 자체'를 모형화한다. 두 형상모수의 크기에 따라 U자, 균등, 종 모양, 한쪽으로 치우친 모양까지 매우 다양한 형태를 만든다. α=β=1이면 정확히 균등분포가 된다.",
+    "commonUseKo": "베이즈 추론에서 이항분포 모수의 사전분포로 쓰이고, 순서통계량의 분포로도 등장한다.",
+    "positionDiscrete": {
+      "x": 520,
+      "y": 335
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bridge": true
+  },
+  {
+    "id": "stdnormal",
+    "notation": "N(0, 1)",
+    "nameKo": "표준정규분포",
+    "nameEn": "Standard normal",
+    "family": "normal",
+    "position": {
+      "x": 330,
+      "y": 480
+    },
+    "params": [],
+    "support": {
+      "type": "line",
+      "lower": null,
+      "upper": null,
+      "latex": "(-\\infty, \\infty)"
+    },
+    "pdfLatex": "\\varphi(z) = \\frac{1}{\\sqrt{2\\pi}}e^{-z^2/2}",
+    "pdf": "stdnormal",
+    "cdf": "stdnormal",
+    "sampler": "stdnormal",
+    "moments": {
+      "meanLatex": "0",
+      "varianceLatex": "1",
+      "mgfLatex": "e^{t^2/2}"
+    },
+    "presets": [],
+    "descriptionKo": "평균 0, 분산 1인 정규분포다. 모든 정규분포는 표준화를 거쳐 이 하나의 분포로 환원되므로, 표를 하나만 만들어 두면 모든 정규 확률을 계산할 수 있다. 카이제곱·t·F 분포가 모두 여기서 출발한다.",
+    "commonUseKo": "z 검정, 신뢰구간, 그리고 세 표본분포(χ², t, F)를 정의하는 기본 벽돌이다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "gamma",
+    "notation": "\\mathrm{Gamma}(r, \\lambda)",
+    "nameKo": "감마분포",
+    "nameEn": "Gamma",
+    "family": "gamma",
+    "parameterization": "rate",
+    "position": {
+      "x": 640,
+      "y": 450
+    },
+    "params": [
+      {
+        "symbol": "r",
+        "notation": "r",
+        "nameKo": "형상모수",
+        "default": 2,
+        "min": 0.1,
+        "max": 20,
+        "step": 0.1
+      },
+      {
+        "symbol": "lambda",
+        "notation": "\\lambda",
+        "nameKo": "비율모수 (rate)",
+        "default": 2,
+        "min": 0.1,
+        "max": 10,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "(0, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{\\lambda^{r}}{\\Gamma(r)}x^{r-1}e^{-\\lambda x}",
+    "pdf": "gamma",
+    "cdf": "gamma",
+    "sampler": "gamma",
+    "moments": {
+      "meanLatex": "\\dfrac{r}{\\lambda}",
+      "varianceLatex": "\\dfrac{r}{\\lambda^{2}}",
+      "mgfLatex": "\\left(1-\\dfrac{t}{\\lambda}\\right)^{-r},\\ t<\\lambda"
+    },
+    "presets": [
+      {
+        "labelKo": "교재 그림 (λ=2, r=1·4·8)",
+        "curves": [
+          {
+            "r": 1,
+            "lambda": 2
+          },
+          {
+            "r": 4,
+            "lambda": 2
+          },
+          {
+            "r": 8,
+            "lambda": 2
+          }
+        ],
+        "xRange": [
+          0,
+          20
+        ],
+        "yRange": [
+          0,
+          2.0
+        ]
+      }
+    ],
+    "descriptionKo": "'사건이 r번 일어날 때까지 걸리는 대기시간'의 분포다. 형상모수 r이 커질수록 최빈값이 오른쪽으로 이동하며 모양이 대칭에 가까워지고, 비율모수 λ가 커질수록 전체가 왼쪽으로 압축된다. r=1이면 지수분포, r=m/2이고 λ=1/2이면 카이제곱분포가 된다.",
+    "commonUseKo": "대기시간·수명 모형, 그리고 카이제곱분포의 일반형으로서 표본분포 이론 전반에 깔려 있다.",
+    "positionDiscrete": {
+      "x": 520,
+      "y": 500
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bridge": true
+  },
+  {
+    "id": "t",
+    "notation": "t(n)",
+    "nameKo": "t 분포",
+    "nameEn": "Student's t",
+    "family": "normal",
+    "position": {
+      "x": 268,
+      "y": 665
+    },
+    "params": [
+      {
+        "symbol": "n",
+        "notation": "n",
+        "nameKo": "자유도",
+        "default": 5,
+        "min": 1,
+        "max": 200,
+        "step": 1
+      }
+    ],
+    "support": {
+      "type": "line",
+      "lower": null,
+      "upper": null,
+      "latex": "(-\\infty, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{\\Gamma\\!\\left(\\frac{n+1}{2}\\right)}{\\sqrt{n\\pi}\\,\\Gamma\\!\\left(\\frac{n}{2}\\right)}\\left(1+\\frac{x^2}{n}\\right)^{-\\frac{n+1}{2}}",
+    "pdf": "t",
+    "cdf": "t",
+    "sampler": "t",
+    "moments": {
+      "meanLatex": "0 \\quad (n>1)",
+      "varianceLatex": "\\dfrac{n}{n-2} \\quad (n>2)",
+      "mgfLatex": "\\text{존재하지 않음}"
+    },
+    "presets": [
+      {
+        "labelKo": "자유도 비교 (n=1·5·30)",
+        "curves": [
+          {
+            "n": 1
+          },
+          {
+            "n": 5
+          },
+          {
+            "n": 30
+          }
+        ],
+        "xRange": [
+          -5,
+          5
+        ],
+        "yRange": [
+          0,
+          0.45
+        ]
+      }
+    ],
+    "descriptionKo": "정규분포를 표준화할 때 모표준편차 대신 표본표준편차를 쓰면 나오는 분포다. 분모가 확률변수이므로 정규분포보다 꼬리가 두껍고, 자유도가 커질수록 표준정규에 수렴한다. 자유도 1일 때는 코시분포로 평균조차 존재하지 않는다.",
+    "commonUseKo": "모분산을 모를 때의 평균 검정과 신뢰구간, 회귀계수의 유의성 검정에 쓰인다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "exponential",
+    "notation": "\\mathrm{Exp}(\\lambda)",
+    "nameKo": "지수분포",
+    "nameEn": "Exponential",
+    "family": "gamma",
+    "parameterization": "rate",
+    "position": {
+      "x": 830,
+      "y": 560
+    },
+    "params": [
+      {
+        "symbol": "lambda",
+        "notation": "\\lambda",
+        "nameKo": "비율모수 (rate)",
+        "default": 1,
+        "min": 0.1,
+        "max": 5,
+        "step": 0.05
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "[0, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\lambda e^{-\\lambda x}",
+    "pdf": "exponential",
+    "cdf": "exponential",
+    "sampler": "exponential",
+    "moments": {
+      "meanLatex": "\\dfrac{1}{\\lambda}",
+      "varianceLatex": "\\dfrac{1}{\\lambda^{2}}",
+      "mgfLatex": "\\dfrac{\\lambda}{\\lambda-t},\\ t<\\lambda"
+    },
+    "presets": [
+      {
+        "labelKo": "λ 비교 (0.5·1·2)",
+        "curves": [
+          {
+            "lambda": 0.5
+          },
+          {
+            "lambda": 1
+          },
+          {
+            "lambda": 2
+          }
+        ],
+        "xRange": [
+          0,
+          8
+        ]
+      }
+    ],
+    "descriptionKo": "다음 사건이 일어날 때까지의 대기시간을 나타내는 분포다. 기억이 없는 성질(memoryless)을 갖는 유일한 연속분포로, 이미 기다린 시간이 앞으로 남은 대기시간의 분포를 바꾸지 않는다. 감마분포에서 r=1인 특수한 경우다.",
+    "commonUseKo": "고장까지의 시간, 대기행렬의 도착 간격, 포아송 과정의 사건 간격을 모형화한다.",
+    "positionDiscrete": {
+      "x": 665,
+      "y": 335
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bridge": true
+  },
+  {
+    "id": "unif01",
+    "notation": "U(0, 1)",
+    "nameKo": "표준균등분포",
+    "nameEn": "Standard uniform",
+    "family": "uniform",
+    "position": {
+      "x": 1110,
+      "y": 470
+    },
+    "params": [],
+    "support": {
+      "type": "bounded",
+      "lower": 0,
+      "upper": 1,
+      "latex": "(0, 1)"
+    },
+    "pdfLatex": "f(x) = 1,\\quad 0<x<1",
+    "pdf": "unif01",
+    "cdf": "unif01",
+    "sampler": "unif01",
+    "moments": {
+      "meanLatex": "\\tfrac{1}{2}",
+      "varianceLatex": "\\tfrac{1}{12}",
+      "mgfLatex": "\\dfrac{e^{t}-1}{t}"
+    },
+    "presets": [],
+    "descriptionKo": "0과 1 사이에서 모든 값이 똑같이 나올 가능성을 갖는 분포다. 컴퓨터 난수의 출발점이며, 누적분포함수의 역함수를 씌우면 어떤 연속분포든 만들어 낼 수 있다(역변환 표본추출). 이 관계도에서 시뮬레이션의 뿌리 역할을 한다.",
+    "commonUseKo": "몬테카를로 시뮬레이션의 기본 난수원, 그리고 확률적분변환의 도착점이다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "f",
+    "notation": "F(r_1, r_2)",
+    "nameKo": "F 분포",
+    "nameEn": "F distribution",
+    "family": "ratio",
+    "position": {
+      "x": 350,
+      "y": 832
+    },
+    "params": [
+      {
+        "symbol": "r1",
+        "notation": "r_1",
+        "nameKo": "분자 자유도",
+        "default": 5,
+        "min": 1,
+        "max": 100,
+        "step": 1
+      },
+      {
+        "symbol": "r2",
+        "notation": "r_2",
+        "nameKo": "분모 자유도",
+        "default": 10,
+        "min": 1,
+        "max": 100,
+        "step": 1
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "(0, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{1}{B\\!\\left(\\frac{r_1}{2},\\frac{r_2}{2}\\right)}\\left(\\frac{r_1}{r_2}\\right)^{\\frac{r_1}{2}}\\frac{x^{\\frac{r_1}{2}-1}}{\\left(1+\\frac{r_1}{r_2}x\\right)^{\\frac{r_1+r_2}{2}}}",
+    "pdf": "f",
+    "cdf": "f",
+    "sampler": "f",
+    "moments": {
+      "meanLatex": "\\dfrac{r_2}{r_2-2}\\quad (r_2>2)",
+      "varianceLatex": "\\dfrac{2r_2^2(r_1+r_2-2)}{r_1(r_2-2)^2(r_2-4)}\\quad (r_2>4)",
+      "mgfLatex": "\\text{존재하지 않음}"
+    },
+    "presets": [
+      {
+        "labelKo": "자유도 비교 (1,1)(5,10)(10,50)",
+        "curves": [
+          {
+            "r1": 1,
+            "r2": 1
+          },
+          {
+            "r1": 5,
+            "r2": 10
+          },
+          {
+            "r1": 10,
+            "r2": 50
+          }
+        ],
+        "xRange": [
+          0,
+          4
+        ]
+      }
+    ],
+    "descriptionKo": "각각 자유도로 나눈 두 독립 카이제곱 확률변수의 비다. 두 분산의 비를 비교하는 상황에서 자연스럽게 나타나며, 항상 양수 값을 갖고 오른쪽으로 치우쳐 있다. 분모 자유도가 커지면 카이제곱분포에 가까워진다.",
+    "commonUseKo": "분산분석(ANOVA)의 검정통계량, 회귀모형의 전체 유의성 검정에 쓰인다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "chisq",
+    "notation": "\\chi^2(m)",
+    "nameKo": "카이제곱분포",
+    "nameEn": "Chi-square",
+    "family": "gamma",
+    "position": {
+      "x": 540,
+      "y": 700
+    },
+    "params": [
+      {
+        "symbol": "m",
+        "notation": "m",
+        "nameKo": "자유도",
+        "default": 5,
+        "min": 1,
+        "max": 100,
+        "step": 1
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "(0, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\frac{1}{2^{m/2}\\Gamma(m/2)}x^{m/2-1}e^{-x/2}",
+    "pdf": "chisq",
+    "cdf": "chisq",
+    "sampler": "chisq",
+    "moments": {
+      "meanLatex": "m",
+      "varianceLatex": "2m",
+      "mgfLatex": "(1-2t)^{-m/2},\\ t<\\tfrac{1}{2}"
+    },
+    "presets": [
+      {
+        "labelKo": "자유도 비교 (m=1·2·5·10)",
+        "curves": [
+          {
+            "m": 1
+          },
+          {
+            "m": 2
+          },
+          {
+            "m": 5
+          },
+          {
+            "m": 10
+          }
+        ],
+        "xRange": [
+          0,
+          20
+        ],
+        "yRange": [
+          0,
+          0.5
+        ]
+      }
+    ],
+    "descriptionKo": "독립인 표준정규확률변수 m개를 각각 제곱해 더한 것의 분포다. 정의상 항상 양수이며, 자유도 m이 커질수록 대칭에 가까워진다. 감마분포에서 r=m/2, λ=1/2인 특수한 경우이기도 하다.",
+    "commonUseKo": "표본분산의 분포, 적합도 검정과 독립성 검정, 그리고 t·F 분포를 만드는 재료다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "unifab",
+    "notation": "U(a, b)",
+    "nameKo": "균등분포",
+    "nameEn": "Uniform",
+    "family": "uniform",
+    "position": {
+      "x": 1110,
+      "y": 640
+    },
+    "params": [
+      {
+        "symbol": "a",
+        "notation": "a",
+        "nameKo": "하한",
+        "default": -1,
+        "min": -10,
+        "max": 9,
+        "step": 0.1
+      },
+      {
+        "symbol": "b",
+        "notation": "b",
+        "nameKo": "상한",
+        "default": 2,
+        "min": -9,
+        "max": 10,
+        "step": 0.1
+      }
+    ],
+    "constraints": [
+      {
+        "type": "lessThan",
+        "left": "a",
+        "right": "b",
+        "messageKo": "하한 a는 상한 b보다 작아야 합니다."
+      }
+    ],
+    "support": {
+      "type": "bounded",
+      "lower": "a",
+      "upper": "b",
+      "latex": "(a, b)"
+    },
+    "pdfLatex": "f(x) = \\frac{1}{b-a},\\quad a<x<b",
+    "pdf": "unifab",
+    "cdf": "unifab",
+    "sampler": "unifab",
+    "moments": {
+      "meanLatex": "\\dfrac{a+b}{2}",
+      "varianceLatex": "\\dfrac{(b-a)^2}{12}",
+      "mgfLatex": "\\dfrac{e^{tb}-e^{ta}}{t(b-a)}"
+    },
+    "presets": [],
+    "descriptionKo": "구간 (a, b) 안에서 모든 값이 똑같은 밀도를 갖는 분포다. 표준균등분포를 평행이동하고 늘린 것에 지나지 않으므로, 위치와 폭만 바뀔 뿐 모양은 언제나 직사각형이다.",
+    "commonUseKo": "사전정보가 전혀 없을 때의 무정보 모형, 반올림 오차 모형 등에 쓰인다.",
+    "positionDiscrete": {
+      "x": 170,
+      "y": 500
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bridge": true
+  },
+  {
+    "id": "cauchy",
+    "notation": "\\mathrm{Cauchy}(x_0, \\gamma)",
+    "nameKo": "코시분포",
+    "nameEn": "Cauchy",
+    "family": "heavytail",
+    "position": {
+      "x": 105,
+      "y": 592
+    },
+    "params": [
+      {
+        "symbol": "x0",
+        "notation": "x_0",
+        "nameKo": "위치모수",
+        "default": 0,
+        "min": -5,
+        "max": 5,
+        "step": 0.1
+      },
+      {
+        "symbol": "gamma",
+        "notation": "\\gamma",
+        "nameKo": "척도모수",
+        "default": 1,
+        "min": 0.1,
+        "max": 5,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "line",
+      "lower": null,
+      "upper": null,
+      "latex": "(-\\infty, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\dfrac{1}{\\pi\\gamma\\left[1+\\left(\\dfrac{x-x_0}{\\gamma}\\right)^{2}\\right]}",
+    "pdf": "cauchy",
+    "cdf": "cauchy",
+    "sampler": "cauchy",
+    "moments": {
+      "meanLatex": "\\text{존재하지 않음}",
+      "varianceLatex": "\\text{존재하지 않음}",
+      "mgfLatex": "\\text{존재하지 않음}"
+    },
+    "presets": [
+      {
+        "labelKo": "정규분포와 비교 (γ=1)",
+        "curves": [
+          {
+            "x0": 0,
+            "gamma": 1
+          },
+          {
+            "x0": 0,
+            "gamma": 0.5
+          },
+          {
+            "x0": 0,
+            "gamma": 2
+          }
+        ],
+        "xRange": [
+          -8,
+          8
+        ]
+      }
+    ],
+    "descriptionKo": "가운데는 정규분포와 비슷해 보이지만 **꼬리가 압도적으로 두껍다.** 꼬리가 x^(−2)로만 줄기 때문에 적분 ∫|x|f(x)dx 가 발산하고, 따라서 평균조차 존재하지 않는다. t(1)과 같은 분포이며, 표준정규 두 개의 비 Z₁/Z₂ 로도 만들어진다. 표본평균을 아무리 많이 모아도 분포가 좁아지지 않는 **중심극한정리의 대표적 반례**다.",
+    "commonUseKo": "물리에서 공명 곡선(로렌츠 분포), 통계에서는 두꺼운 꼬리·이상치에 대한 강건성을 논할 때의 기준 사례로 쓰인다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "weibull",
+    "notation": "\\mathrm{Weibull}(a, b)",
+    "nameKo": "와이블분포",
+    "nameEn": "Weibull",
+    "family": "lifetime",
+    "parameterization": "rate",
+    "position": {
+      "x": 965,
+      "y": 715
+    },
+    "params": [
+      {
+        "symbol": "a",
+        "notation": "a",
+        "nameKo": "비율모수 (rate)",
+        "default": 1,
+        "min": 0.1,
+        "max": 5,
+        "step": 0.1
+      },
+      {
+        "symbol": "b",
+        "notation": "b",
+        "nameKo": "형상모수",
+        "default": 1.5,
+        "min": 0.2,
+        "max": 6,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "halfline",
+      "lower": 0,
+      "upper": null,
+      "latex": "(0, \\infty)"
+    },
+    "pdfLatex": "f(x) = ab\\,x^{b-1}e^{-a x^{b}},\\quad x>0",
+    "pdf": "weibull",
+    "cdf": "weibull",
+    "sampler": "weibull",
+    "moments": {
+      "meanLatex": "a^{-1/b}\\,\\Gamma\\!\\left(1+\\tfrac{1}{b}\\right)",
+      "varianceLatex": "a^{-2/b}\\left[\\Gamma\\!\\left(1+\\tfrac{2}{b}\\right)-\\Gamma^{2}\\!\\left(1+\\tfrac{1}{b}\\right)\\right]",
+      "mgfLatex": "\\text{닫힌 형태 없음}"
+    },
+    "presets": [
+      {
+        "labelKo": "형상모수 비교 (b=0.7·1·3)",
+        "curves": [
+          {
+            "a": 1,
+            "b": 0.7
+          },
+          {
+            "a": 1,
+            "b": 1
+          },
+          {
+            "a": 1,
+            "b": 3
+          }
+        ],
+        "xRange": [
+          0,
+          3
+        ]
+      }
+    ],
+    "descriptionKo": "지수분포의 **고장률을 시간에 따라 변하게** 일반화한 분포다. 위험률(hazard)이 abx^(b−1) 이므로 b<1 이면 시간이 갈수록 고장률이 떨어지고(초기 불량), b=1 이면 일정하며(지수분포), b>1 이면 올라간다(마모). b=1 에서 정확히 지수분포가 되는 것이 이 관계도의 연결점이다.",
+    "commonUseKo": "수명·신뢰성 분석의 표준 모형. 풍속 분포, 재료 강도 모형에도 널리 쓰인다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "dblexp",
+    "notation": "\\mathrm{DE}(0, \\lambda)",
+    "nameKo": "이중지수분포",
+    "nameEn": "Double Exponential (Laplace)",
+    "family": "lifetime",
+    "parameterization": "rate",
+    "position": {
+      "x": 745,
+      "y": 820
+    },
+    "params": [
+      {
+        "symbol": "lambda",
+        "notation": "\\lambda",
+        "nameKo": "비율모수 (rate)",
+        "default": 1,
+        "min": 0.1,
+        "max": 5,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "line",
+      "lower": null,
+      "upper": null,
+      "latex": "(-\\infty, \\infty)"
+    },
+    "pdfLatex": "f(x) = \\dfrac{\\lambda}{2}e^{-\\lambda|x|}",
+    "pdf": "dblexp",
+    "cdf": "dblexp",
+    "sampler": "dblexp",
+    "moments": {
+      "meanLatex": "0",
+      "varianceLatex": "\\dfrac{2}{\\lambda^{2}}",
+      "mgfLatex": "\\dfrac{\\lambda^{2}}{\\lambda^{2}-t^{2}},\\ |t|<\\lambda"
+    },
+    "presets": [
+      {
+        "labelKo": "λ 비교 (0.5·1·2)",
+        "curves": [
+          {
+            "lambda": 0.5
+          },
+          {
+            "lambda": 1
+          },
+          {
+            "lambda": 2
+          }
+        ],
+        "xRange": [
+          -6,
+          6
+        ]
+      }
+    ],
+    "descriptionKo": "지수분포를 0을 기준으로 좌우 대칭이 되게 **거울로 붙인** 분포다(라플라스분포). 원점에서 뾰족한 꼭짓점이 생기고 꼬리는 정규분포보다 두껍다. 독립인 두 지수확률변수의 차 X₁−X₂ 가 정확히 이 분포이며, 거꾸로 절댓값 |X| 를 취하면 지수분포로 되돌아간다.",
+    "commonUseKo": "중앙값 추정의 최대가능도 기반, 회귀의 LAD(최소절대편차), 베이즈 LASSO의 사전분포로 쓰인다.",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "bernoulli",
+    "notation": "\\mathrm{Bern}(p)",
+    "nameKo": "베르누이분포",
+    "nameEn": "Bernoulli",
+    "family": "bernoulli",
+    "discrete": true,
+    "position": {
+      "x": 900,
+      "y": 118
+    },
+    "params": [
+      {
+        "symbol": "p",
+        "notation": "p",
+        "nameKo": "성공확률",
+        "default": 0.3,
+        "min": 0.01,
+        "max": 0.99,
+        "step": 0.01
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": 0,
+      "upper": 1,
+      "latex": "\\{0, 1\\}"
+    },
+    "pdfLatex": "P(X=k) = p^{k}(1-p)^{1-k},\\quad k \\in \\{0,1\\}",
+    "pdf": "bernoulli",
+    "cdf": "bernoulli",
+    "sampler": "bernoulli",
+    "moments": {
+      "meanLatex": "p",
+      "varianceLatex": "p(1-p)",
+      "mgfLatex": "1-p+pe^{t}"
+    },
+    "presets": [
+      {
+        "labelKo": "p 비교 (0.2·0.5·0.8)",
+        "curves": [
+          {
+            "p": 0.2
+          },
+          {
+            "p": 0.5
+          },
+          {
+            "p": 0.8
+          }
+        ],
+        "xRange": [
+          -0.5,
+          1.5
+        ]
+      }
+    ],
+    "descriptionKo": "성공과 실패, 단 두 결과만 갖는 시행 한 번의 분포다. 이 관계도에서 가장 단순한 벽돌이며, 다른 이산분포는 대부분 이 시행을 어떻게 반복하고 무엇을 세느냐에 따라 만들어진다. 성공 횟수를 세면 이항, 첫 성공까지의 시행 수를 세면 기하분포가 된다.",
+    "commonUseKo": "동전 던지기, 합격/불합격, 클릭 여부처럼 이분 결과를 다루는 모든 모형의 출발점이다.",
+    "positionDiscrete": {
+      "x": 170,
+      "y": 55
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "binomial",
+    "notation": "B(n, p)",
+    "nameKo": "이항분포",
+    "nameEn": "Binomial",
+    "family": "bernoulli",
+    "discrete": true,
+    "position": {
+      "x": 700,
+      "y": 118
+    },
+    "params": [
+      {
+        "symbol": "n",
+        "notation": "n",
+        "nameKo": "시행 횟수",
+        "default": 20,
+        "min": 1,
+        "max": 200,
+        "step": 1,
+        "integer": true
+      },
+      {
+        "symbol": "p",
+        "notation": "p",
+        "nameKo": "성공확률",
+        "default": 0.35,
+        "min": 0.01,
+        "max": 0.99,
+        "step": 0.01
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": 0,
+      "upper": "n",
+      "latex": "\\{0, 1, \\dots, n\\}"
+    },
+    "pdfLatex": "P(X=k) = \\binom{n}{k}p^{k}(1-p)^{n-k}",
+    "pdf": "binomial",
+    "cdf": "binomial",
+    "sampler": "binomial",
+    "moments": {
+      "meanLatex": "np",
+      "varianceLatex": "np(1-p)",
+      "mgfLatex": "(1-p+pe^{t})^{n}"
+    },
+    "presets": [
+      {
+        "labelKo": "정규 근사 (n=5·20·100, p=0.35)",
+        "curves": [
+          {
+            "n": 5,
+            "p": 0.35
+          },
+          {
+            "n": 20,
+            "p": 0.35
+          },
+          {
+            "n": 100,
+            "p": 0.35
+          }
+        ]
+      },
+      {
+        "labelKo": "포아송 근사 (n=100, p=0.03)",
+        "curves": [
+          {
+            "n": 100,
+            "p": 0.03
+          }
+        ],
+        "xRange": [
+          -0.5,
+          14.5
+        ]
+      }
+    ],
+    "descriptionKo": "독립인 베르누이 시행 n번에서 성공이 몇 번 나오는지의 분포다. n이 커지면 좌우 대칭에 가까워지며 정규분포로 근사되고(드무아브르–라플라스), n이 크고 p가 작아 np가 일정하면 포아송분포로 근사된다. 이 관계도에서 가장 많은 화살표가 드나드는 노드다.",
+    "commonUseKo": "불량률 검사, 여론조사 응답 수, A/B 테스트의 전환 수 등 '몇 번 성공했는가'를 다룬다.",
+    "positionDiscrete": {
+      "x": 400,
+      "y": 55
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "hypergeometric",
+    "notation": "\\mathrm{HG}(N, K, n)",
+    "nameKo": "초기하분포",
+    "nameEn": "Hypergeometric",
+    "family": "bernoulli",
+    "discrete": true,
+    "position": {
+      "x": 975,
+      "y": 255
+    },
+    "params": [
+      {
+        "symbol": "N",
+        "notation": "N",
+        "nameKo": "전체 개수",
+        "default": 50,
+        "min": 2,
+        "max": 400,
+        "step": 1,
+        "integer": true
+      },
+      {
+        "symbol": "K",
+        "notation": "K",
+        "nameKo": "성공 개수",
+        "default": 20,
+        "min": 1,
+        "max": 200,
+        "step": 1,
+        "integer": true
+      },
+      {
+        "symbol": "n",
+        "notation": "n",
+        "nameKo": "뽑는 개수",
+        "default": 10,
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "integer": true
+      }
+    ],
+    "constraints": [
+      {
+        "type": "lessEq",
+        "left": "K",
+        "right": "N",
+        "messageKo": "성공 개수 K는 전체 N 이하여야 합니다."
+      },
+      {
+        "type": "lessEq",
+        "left": "n",
+        "right": "N",
+        "messageKo": "뽑는 개수 n은 전체 N 이하여야 합니다."
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": 0,
+      "upper": "n",
+      "latex": "\\max(0,\\,n-N+K) \\le k \\le \\min(n,K)"
+    },
+    "pdfLatex": "P(X=k) = \\frac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}",
+    "pdf": "hypergeometric",
+    "cdf": "hypergeometric",
+    "sampler": "hypergeometric",
+    "moments": {
+      "meanLatex": "n\\frac{K}{N}",
+      "varianceLatex": "n\\frac{K}{N}\\left(1-\\frac{K}{N}\\right)\\frac{N-n}{N-1}",
+      "mgfLatex": "\\text{닫힌 형태가 없음}"
+    },
+    "presets": [
+      {
+        "labelKo": "N 키우기 (50·200·400, K/N=0.4 고정)",
+        "curves": [
+          {
+            "N": 50,
+            "K": 20,
+            "n": 10
+          },
+          {
+            "N": 200,
+            "K": 80,
+            "n": 10
+          },
+          {
+            "N": 400,
+            "K": 160,
+            "n": 10
+          }
+        ],
+        "xRange": [
+          -0.5,
+          10.5
+        ]
+      }
+    ],
+    "descriptionKo": "전체 N개 중 성공이 K개 있을 때, n개를 **비복원**으로 뽑아 성공이 몇 개인지의 분포다. 이항분포와의 유일한 차이는 뽑은 것을 되돌려 놓지 않는다는 점이며, 그래서 시행이 서로 독립이 아니다. 분산에 붙는 (N−n)/(N−1) 이 바로 그 대가로, 유한모집단 수정계수라고 부른다.",
+    "commonUseKo": "로트 검사, 카드 게임, 유한한 모집단에서의 표본추출을 다룬다.",
+    "positionDiscrete": {
+      "x": 665,
+      "y": 55
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "geometric",
+    "notation": "\\mathrm{Geom}(p)",
+    "nameKo": "기하분포",
+    "nameEn": "Geometric",
+    "family": "waiting",
+    "discrete": true,
+    "position": {
+      "x": 110,
+      "y": 190
+    },
+    "params": [
+      {
+        "symbol": "p",
+        "notation": "p",
+        "nameKo": "성공확률",
+        "default": 0.3,
+        "min": 0.02,
+        "max": 0.99,
+        "step": 0.01
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": 1,
+      "upper": null,
+      "latex": "\\{1, 2, 3, \\dots\\}"
+    },
+    "pdfLatex": "P(X=k) = (1-p)^{k-1}p,\\quad k = 1, 2, \\dots",
+    "pdf": "geometric",
+    "cdf": "geometric",
+    "sampler": "geometric",
+    "moments": {
+      "meanLatex": "\\dfrac{1}{p}",
+      "varianceLatex": "\\dfrac{1-p}{p^{2}}",
+      "mgfLatex": "\\dfrac{pe^{t}}{1-(1-p)e^{t}}"
+    },
+    "presets": [
+      {
+        "labelKo": "p 비교 (0.5·0.3·0.1)",
+        "curves": [
+          {
+            "p": 0.5
+          },
+          {
+            "p": 0.3
+          },
+          {
+            "p": 0.1
+          }
+        ],
+        "xRange": [
+          0.5,
+          25.5
+        ]
+      }
+    ],
+    "descriptionKo": "첫 성공이 나올 때까지 몇 번 시행했는지의 분포다. **기억이 없는 성질**을 갖는 유일한 이산분포로, 이미 열 번 실패했다는 사실이 다음 성공까지의 분포를 바꾸지 않는다. 연속 쪽의 지수분포와 정확히 같은 자리에 있으며, 실제로 시간 간격을 잘게 쪼개면 지수분포로 수렴한다.",
+    "commonUseKo": "첫 고장까지의 시도 횟수, 첫 당첨까지의 구매 횟수 같은 대기 문제에 쓰인다.",
+    "positionDiscrete": {
+      "x": 170,
+      "y": 195
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "negbinomial",
+    "notation": "\\mathrm{NB}(r, p)",
+    "nameKo": "음이항분포",
+    "nameEn": "Negative binomial",
+    "family": "waiting",
+    "discrete": true,
+    "position": {
+      "x": 110,
+      "y": 45
+    },
+    "params": [
+      {
+        "symbol": "r",
+        "notation": "r",
+        "nameKo": "목표 성공 횟수",
+        "default": 3,
+        "min": 1,
+        "max": 40,
+        "step": 1,
+        "integer": true
+      },
+      {
+        "symbol": "p",
+        "notation": "p",
+        "nameKo": "성공확률",
+        "default": 0.3,
+        "min": 0.05,
+        "max": 0.99,
+        "step": 0.01
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": "r",
+      "upper": null,
+      "latex": "\\{r, r+1, r+2, \\dots\\}"
+    },
+    "pdfLatex": "P(X=k) = \\binom{k-1}{r-1}p^{r}(1-p)^{k-r}",
+    "pdf": "negbinomial",
+    "cdf": "negbinomial",
+    "sampler": "negbinomial",
+    "moments": {
+      "meanLatex": "\\dfrac{r}{p}",
+      "varianceLatex": "\\dfrac{r(1-p)}{p^{2}}",
+      "mgfLatex": "\\left(\\dfrac{pe^{t}}{1-(1-p)e^{t}}\\right)^{r}"
+    },
+    "presets": [
+      {
+        "labelKo": "r 키우기 (1·3·10, p=0.3)",
+        "curves": [
+          {
+            "r": 1,
+            "p": 0.3
+          },
+          {
+            "r": 3,
+            "p": 0.3
+          },
+          {
+            "r": 10,
+            "p": 0.3
+          }
+        ]
+      }
+    ],
+    "descriptionKo": "r번째 성공이 나올 때까지 몇 번 시행했는지의 분포다. 기하분포를 r개 더한 것이며, 이는 지수분포를 r개 더하면 감마분포가 되는 것과 정확히 같은 구조다. r이 커지면 정규분포에 근사한다.",
+    "commonUseKo": "목표 성공 횟수를 채울 때까지의 시행 수, 그리고 분산이 평균보다 큰 계수 자료(과산포)의 모형으로 쓰인다.",
+    "positionDiscrete": {
+      "x": 400,
+      "y": 195
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "poisson",
+    "notation": "\\mathrm{Pois}(\\lambda)",
+    "nameKo": "포아송분포",
+    "nameEn": "Poisson",
+    "family": "count",
+    "discrete": true,
+    "position": {
+      "x": 430,
+      "y": 45
+    },
+    "params": [
+      {
+        "symbol": "lambda",
+        "notation": "\\lambda",
+        "nameKo": "평균 발생 횟수",
+        "default": 4,
+        "min": 0.1,
+        "max": 60,
+        "step": 0.1
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": 0,
+      "upper": null,
+      "latex": "\\{0, 1, 2, \\dots\\}"
+    },
+    "pdfLatex": "P(X=k) = \\frac{\\lambda^{k}e^{-\\lambda}}{k!}",
+    "pdf": "poisson",
+    "cdf": "poisson",
+    "sampler": "poisson",
+    "moments": {
+      "meanLatex": "\\lambda",
+      "varianceLatex": "\\lambda",
+      "mgfLatex": "\\exp\\!\\left(\\lambda(e^{t}-1)\\right)"
+    },
+    "presets": [
+      {
+        "labelKo": "λ 키우기 (1·4·16)",
+        "curves": [
+          {
+            "lambda": 1
+          },
+          {
+            "lambda": 4
+          },
+          {
+            "lambda": 16
+          }
+        ]
+      }
+    ],
+    "descriptionKo": "정해진 구간에서 사건이 몇 번 일어나는지의 분포다. 평균과 분산이 모두 λ로 같다는 것이 이 분포의 지문이며, 자료의 분산이 평균보다 크게 나오면 포아송 가정을 의심해야 한다. 이항분포에서 n이 크고 p가 작을 때의 극한이자, 포아송 과정을 통해 지수·감마분포와 직접 이어진다.",
+    "commonUseKo": "단위 시간당 도착 건수, 페이지당 오탈자 수, 단위 면적당 결함 수 등 희귀 사건의 계수를 다룬다.",
+    "positionDiscrete": {
+      "x": 665,
+      "y": 195
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ]
+  },
+  {
+    "id": "discreteUniform",
+    "notation": "\\mathrm{DU}(a, b)",
+    "nameKo": "이산 균등분포",
+    "nameEn": "Discrete uniform",
+    "family": "uniform",
+    "discrete": true,
+    "position": {
+      "x": 170,
+      "y": 335
+    },
+    "params": [
+      {
+        "symbol": "a",
+        "notation": "a",
+        "nameKo": "하한",
+        "default": 1,
+        "min": -20,
+        "max": 20,
+        "step": 1,
+        "integer": true
+      },
+      {
+        "symbol": "b",
+        "notation": "b",
+        "nameKo": "상한",
+        "default": 6,
+        "min": -19,
+        "max": 60,
+        "step": 1,
+        "integer": true
+      }
+    ],
+    "constraints": [
+      {
+        "type": "lessEq",
+        "left": "a",
+        "right": "b",
+        "messageKo": "하한 a는 상한 b 이하여야 합니다."
+      }
+    ],
+    "support": {
+      "type": "discrete",
+      "lower": "a",
+      "upper": "b",
+      "latex": "\\{a, a+1, \\dots, b\\}"
+    },
+    "pdfLatex": "P(X=k) = \\frac{1}{b-a+1}",
+    "pdf": "discreteUniform",
+    "cdf": "discreteUniform",
+    "sampler": "discreteUniform",
+    "moments": {
+      "meanLatex": "\\dfrac{a+b}{2}",
+      "varianceLatex": "\\dfrac{(b-a+1)^{2}-1}{12}",
+      "mgfLatex": "\\dfrac{e^{at}-e^{(b+1)t}}{(b-a+1)(1-e^{t})}"
+    },
+    "presets": [
+      {
+        "labelKo": "주사위 (1~6)",
+        "curves": [
+          {
+            "a": 1,
+            "b": 6
+          }
+        ],
+        "xRange": [
+          0.5,
+          6.5
+        ],
+        "yRange": [
+          0,
+          0.25
+        ]
+      }
+    ],
+    "descriptionKo": "a부터 b까지의 정수가 모두 같은 확률을 갖는 분포다. 주사위가 대표 사례이며, 구간을 잘게 쪼개면 연속 균등분포로 수렴한다. 중심극한정리가 연속분포만의 이야기가 아님을 보여 주는 가장 좋은 예이기도 하다 — 주사위 여러 개의 평균은 빠르게 정규에 가까워진다.",
+    "commonUseKo": "주사위·난수표, 그리고 사전정보가 없는 유한 선택지 모형에 쓰인다.",
+    "positionDiscrete": {
+      "x": 170,
+      "y": 335
+    },
+    "graphs": [
+      "discrete"
+    ]
+  }
+]

@@ -1,0 +1,2725 @@
+[
+  {
+    "id": "E1",
+    "from": "normal",
+    "to": "lognormal",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = e^{X}",
+    "summaryKo": "정규확률변수에 지수를 취하면 로그정규분포가 된다.",
+    "bend": 0.18,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X \\sim N(\\mu, \\sigma^2),\\quad Y = e^{X}",
+        "explanationKo": "지수함수는 순증가 함수이므로 CDF 기법을 그대로 쓸 수 있다."
+      },
+      {
+        "latex": "F_Y(y) = P(e^{X} \\le y) = P(X \\le \\ln y),\\quad y>0",
+        "explanationKo": "양변에 로그를 취해 사건을 X에 대한 부등식으로 바꾼다. y>0 에서만 의미가 있으므로 지지집합이 (0,∞)가 된다."
+      },
+      {
+        "latex": "F_Y(y) = \\Phi\\!\\left(\\frac{\\ln y-\\mu}{\\sigma}\\right)",
+        "explanationKo": "정규분포의 CDF로 표현된다."
+      },
+      {
+        "latex": "f_Y(y) = \\varphi\\!\\left(\\frac{\\ln y-\\mu}{\\sigma}\\right)\\cdot\\frac{1}{y\\sigma} = \\frac{1}{y\\sigma\\sqrt{2\\pi}}e^{-\\frac{(\\ln y-\\mu)^2}{2\\sigma^2}}",
+        "explanationKo": "y로 미분한다. 연쇄법칙에서 나오는 1/y 인자가 로그정규 밀도의 특징이다."
+      }
+    ],
+    "edgeLabelLatex": "e^{X}",
+    "simulation": {
+      "recipe": "normalToLognormal",
+      "titleKo": "exp(X) 가 로그정규가 되는가",
+      "noteKo": "N(μ,σ²)에서 뽑아 지수를 취한 표본을 LN(μ,σ²)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "mu",
+          "nameKo": "μ",
+          "min": -2,
+          "max": 2,
+          "step": 0.1,
+          "default": 0
+        },
+        {
+          "symbol": "sigma",
+          "nameKo": "σ",
+          "min": 0.1,
+          "max": 1.5,
+          "step": 0.05,
+          "default": 0.5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E2",
+    "from": "lognormal",
+    "to": "normal",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = \\ln X",
+    "summaryKo": "로그정규확률변수에 로그를 취하면 정규분포가 된다. E1의 역변환이다.",
+    "bend": 0.18,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X \\sim \\mathrm{LN}(\\mu, \\sigma^2),\\quad Y = \\ln X",
+        "explanationKo": "로그정규분포의 정의가 곧 '로그를 취하면 정규'이므로 결과는 정의상 따라온다."
+      },
+      {
+        "latex": "F_Y(y) = P(\\ln X \\le y) = P(X \\le e^{y})",
+        "explanationKo": "지수함수를 취해 X에 대한 부등식으로 바꾼다. e^y > 0 이므로 모든 실수 y에서 정의된다."
+      },
+      {
+        "latex": "= \\Phi\\!\\left(\\frac{\\ln e^{y}-\\mu}{\\sigma}\\right) = \\Phi\\!\\left(\\frac{y-\\mu}{\\sigma}\\right)",
+        "explanationKo": "로그정규 CDF에 대입하면 로그와 지수가 상쇄된다."
+      },
+      {
+        "latex": "Y \\sim N(\\mu, \\sigma^2)",
+        "explanationKo": "정규분포의 CDF와 정확히 일치한다."
+      }
+    ],
+    "edgeLabelLatex": "\\ln X",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E3",
+    "from": "lognormal",
+    "to": "lognormal",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\prod_{i=1}^{n} X_i",
+    "summaryKo": "독립인 로그정규확률변수들의 곱은 다시 로그정규분포이며, 모수는 각각 더해진다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": -42
+    },
+    "selfLoop": true,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X_i \\sim \\mathrm{LN}(\\mu_i, \\sigma_i^2) \\text{ 독립},\\quad Y = \\prod_i X_i",
+        "explanationKo": "곱을 직접 다루는 대신 로그를 취해 합의 문제로 바꾼다."
+      },
+      {
+        "latex": "\\ln Y = \\sum_i \\ln X_i",
+        "explanationKo": "로그는 곱을 합으로 바꾼다. 이것이 로그정규분포가 곱셈에 대해 닫혀 있는 이유다."
+      },
+      {
+        "latex": "\\ln X_i \\sim N(\\mu_i, \\sigma_i^2) \\;\\Rightarrow\\; \\ln Y \\sim N\\!\\left(\\sum_i \\mu_i,\\ \\sum_i \\sigma_i^2\\right)",
+        "explanationKo": "E2에 의해 각 항이 정규이고, E4(정규의 합)에 의해 그 합도 정규다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{LN}\\!\\left(\\sum_i \\mu_i,\\ \\sum_i \\sigma_i^2\\right)",
+        "explanationKo": "E1로 되돌아오면 결과를 얻는다."
+      }
+    ],
+    "edgeLabelLatex": "\\prod_i X_i",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E4",
+    "from": "normal",
+    "to": "normal",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\sum_{i=1}^{n} X_i",
+    "summaryKo": "독립인 정규확률변수들의 합은 다시 정규분포이며, 평균과 분산이 각각 더해진다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": -42
+    },
+    "selfLoop": true,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = \\exp\\!\\left(\\mu_i t + \\tfrac{1}{2}\\sigma_i^2 t^2\\right)",
+        "explanationKo": "정규분포의 적률생성함수에서 출발한다."
+      },
+      {
+        "latex": "M_Y(t) = \\prod_i M_{X_i}(t) = \\exp\\!\\left(\\left(\\sum_i \\mu_i\\right)t + \\tfrac{1}{2}\\left(\\sum_i \\sigma_i^2\\right)t^2\\right)",
+        "explanationKo": "독립이므로 합의 MGF는 각 MGF의 곱이다. 지수의 곱은 지수부의 합이 된다."
+      },
+      {
+        "latex": "Y \\sim N\\!\\left(\\sum_i \\mu_i,\\ \\sum_i \\sigma_i^2\\right)",
+        "explanationKo": "얻은 MGF가 다시 정규분포의 MGF 형태이므로, MGF의 유일성에 의해 결론이 따라온다."
+      }
+    ],
+    "edgeLabelLatex": "\\sum_i X_i",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E5",
+    "from": "normal",
+    "to": "stdnormal",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Z = \\dfrac{X-\\mu}{\\sigma}",
+    "summaryKo": "정규확률변수를 표준화하면 표준정규분포가 된다.",
+    "bend": 0.2,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "note": "원본 다이어그램은 분모를 σ²로 표기했으나 이는 오류다. σ²로 나누면 분산이 1/σ²이 되어 표준정규가 되지 않는다 (PRD §11.1).",
+    "derivation": [
+      {
+        "latex": "X \\sim N(\\mu,\\sigma^2),\\quad Z = \\frac{X-\\mu}{\\sigma}",
+        "explanationKo": "위치를 μ만큼 옮기고 척도를 σ로 나눈다."
+      },
+      {
+        "latex": "F_Z(z) = P\\!\\left(\\frac{X-\\mu}{\\sigma}\\le z\\right) = P(X \\le \\mu+\\sigma z)",
+        "explanationKo": "σ>0 이므로 부등호 방향이 유지된다."
+      },
+      {
+        "latex": "= \\Phi\\!\\left(\\frac{(\\mu+\\sigma z)-\\mu}{\\sigma}\\right) = \\Phi(z)",
+        "explanationKo": "μ와 σ가 상쇄되어 모수가 사라진다."
+      },
+      {
+        "latex": "E(Z)=0,\\quad \\mathrm{Var}(Z)=\\frac{\\sigma^2}{\\sigma^2}=1",
+        "explanationKo": "분모가 σ여야 분산이 1이 된다. σ²로 나누면 분산이 1/σ²이 되어 표준정규가 아니다."
+      }
+    ],
+    "edgeLabelLatex": "\\dfrac{X-\\mu}{\\sigma}",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E6",
+    "from": "stdnormal",
+    "to": "normal",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = \\mu + \\sigma Z",
+    "summaryKo": "표준정규확률변수에 척도 σ를 곱하고 μ만큼 옮기면 임의의 정규분포를 만들 수 있다.",
+    "bend": 0.2,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "Z \\sim N(0,1),\\quad Y = \\mu + \\sigma Z,\\ \\sigma>0",
+        "explanationKo": "E5의 역변환이다."
+      },
+      {
+        "latex": "F_Y(y) = P(\\mu+\\sigma Z \\le y) = \\Phi\\!\\left(\\frac{y-\\mu}{\\sigma}\\right)",
+        "explanationKo": "Z에 대해 풀면 바로 정규분포의 CDF가 나온다."
+      },
+      {
+        "latex": "f_Y(y) = \\frac{1}{\\sigma}\\varphi\\!\\left(\\frac{y-\\mu}{\\sigma}\\right)",
+        "explanationKo": "미분하면 1/σ 인자가 붙는다. 이것이 정규분포족이 위치-척도족인 이유다."
+      }
+    ],
+    "edgeLabelLatex": "\\mu+\\sigma X",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E7",
+    "from": "gamma",
+    "to": "exponential",
+    "type": "special",
+    "conditionLatex": "r = 1",
+    "transformLatex": null,
+    "summaryKo": "감마분포에서 형상모수 r이 1이면 지수분포가 된다.",
+    "bend": 0.12,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "f(x) = \\frac{\\lambda^{r}}{\\Gamma(r)}x^{r-1}e^{-\\lambda x}",
+        "explanationKo": "감마분포의 밀도함수에서 출발한다 (rate 모수화)."
+      },
+      {
+        "latex": "\\Gamma(1) = 1,\\qquad x^{1-1} = x^{0} = 1",
+        "explanationKo": "r=1을 대입하면 감마함수 값이 1이 되고 x의 거듭제곱 항이 사라진다."
+      },
+      {
+        "latex": "f(x) = \\lambda e^{-\\lambda x}",
+        "explanationKo": "지수분포의 밀도함수와 정확히 일치한다. 평균도 r/λ = 1/λ 로 맞아떨어진다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E8",
+    "from": "gamma",
+    "to": "chisq",
+    "type": "special",
+    "conditionLatex": "r = \\dfrac{m}{2},\\ \\lambda = \\dfrac{1}{2}",
+    "transformLatex": null,
+    "summaryKo": "감마분포에서 r=m/2, λ=1/2이면 자유도 m인 카이제곱분포가 된다.",
+    "bend": -0.1,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "note": "원본 다이어그램은 r=1/2로 표기했으나 이는 χ²(1) 한 경우뿐이다. 일반형은 r=m/2 다 (PRD §11.3).",
+    "derivation": [
+      {
+        "latex": "f(x) = \\frac{\\lambda^{r}}{\\Gamma(r)}x^{r-1}e^{-\\lambda x}",
+        "explanationKo": "감마분포의 밀도함수에서 출발한다."
+      },
+      {
+        "latex": "r=\\frac{m}{2},\\ \\lambda=\\frac{1}{2} \\;\\Rightarrow\\; \\lambda^{r} = \\left(\\tfrac{1}{2}\\right)^{m/2} = \\frac{1}{2^{m/2}}",
+        "explanationKo": "두 모수를 대입한다. 비율모수가 1/2이므로 지수부는 −x/2가 된다."
+      },
+      {
+        "latex": "f(x) = \\frac{1}{2^{m/2}\\Gamma(m/2)}x^{m/2-1}e^{-x/2}",
+        "explanationKo": "카이제곱분포의 밀도함수와 정확히 일치한다."
+      },
+      {
+        "latex": "E(X) = \\frac{r}{\\lambda} = \\frac{m/2}{1/2} = m,\\qquad \\mathrm{Var}(X) = \\frac{r}{\\lambda^2} = 2m",
+        "explanationKo": "평균과 분산도 카이제곱분포의 알려진 값과 일치한다."
+      }
+    ],
+    "edgeLabelLatex": "r=\\tfrac{m}{2},\\ \\lambda=\\tfrac{1}{2}",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E9",
+    "from": "exponential",
+    "to": "gamma",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립, 동일 } \\lambda",
+    "transformLatex": "Y = \\sum_{i=1}^{n} X_i",
+    "summaryKo": "비율모수가 같은 독립 지수확률변수 n개를 더하면 Gamma(n, λ)가 된다.",
+    "bend": 0.22,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = \\frac{\\lambda}{\\lambda-t} = \\left(1-\\frac{t}{\\lambda}\\right)^{-1},\\quad t<\\lambda",
+        "explanationKo": "지수분포의 적률생성함수다."
+      },
+      {
+        "latex": "M_Y(t) = \\prod_{i=1}^{n} M_{X_i}(t) = \\left(1-\\frac{t}{\\lambda}\\right)^{-n}",
+        "explanationKo": "독립이므로 합의 MGF는 곱이 되고, 같은 항이 n번 곱해져 지수가 −n이 된다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{Gamma}(n, \\lambda)",
+        "explanationKo": "이는 형상모수 n인 감마분포의 MGF다. 지수분포가 감마분포의 r=1인 경우였음을 생각하면 자연스럽다."
+      },
+      {
+        "latex": "E(Y) = \\frac{n}{\\lambda}",
+        "explanationKo": "n번째 사건까지의 대기시간이 한 번 대기시간의 n배라는 직관과 맞는다."
+      }
+    ],
+    "edgeLabelLatex": "\\sum_i X_i",
+    "simulation": {
+      "recipe": "sumExp",
+      "titleKo": "지수 n개의 합이 Gamma(n, λ) 가 되는가",
+      "noteKo": "독립 지수확률변수 n개를 더한 표본을 Gamma(n, λ)의 이론 밀도와 겹쳐 봅니다. n=1이면 지수분포 그대로입니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "합할 개수 n",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E10",
+    "from": "exponential",
+    "to": "exponential",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\min(X_1,\\dots,X_n) \\sim \\mathrm{Exp}(n\\lambda)",
+    "summaryKo": "독립 지수확률변수 n개의 최솟값은 다시 지수분포이며, 비율모수가 n배가 된다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": -44
+    },
+    "selfLoop": true,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "note": "원본 다이어그램은 결과 모수를 밝히지 않았으나 Exp(λ)가 아니라 Exp(nλ)다 (PRD §11.5).",
+    "derivation": [
+      {
+        "latex": "P(X_i > x) = e^{-\\lambda x}",
+        "explanationKo": "지수분포의 생존함수다. 최솟값 문제는 CDF보다 생존함수로 다루는 편이 훨씬 쉽다."
+      },
+      {
+        "latex": "P(Y > x) = P(\\text{모든 } X_i > x) = \\prod_{i=1}^{n} e^{-\\lambda x} = e^{-n\\lambda x}",
+        "explanationKo": "최솟값이 x보다 크다는 것은 모든 항이 x보다 크다는 것과 같다. 독립이므로 확률이 곱해진다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{Exp}(n\\lambda),\\qquad E(Y) = \\frac{1}{n\\lambda}",
+        "explanationKo": "생존함수가 다시 지수 형태이므로 결과도 지수분포다. 후보가 n개면 첫 사건이 평균 1/n배 빨리 온다."
+      }
+    ],
+    "edgeLabelLatex": "\\min_i X_i",
+    "simulation": {
+      "recipe": "minExp",
+      "titleKo": "최솟값의 비율모수가 정말 n배인가",
+      "noteKo": "독립 지수확률변수 n개의 최솟값을 Exp(nλ)의 이론 밀도와 겹쳐 봅니다. Exp(λ)와도 비교해 보세요.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "개수 n",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E11",
+    "from": "gamma",
+    "to": "beta",
+    "type": "transform",
+    "conditionLatex": "X_1\\sim\\Gamma(\\alpha,\\lambda),\\ X_2\\sim\\Gamma(\\beta,\\lambda) \\text{ 독립}",
+    "transformLatex": "Y = \\dfrac{X_1}{X_1+X_2}",
+    "summaryKo": "비율모수가 같은 두 독립 감마확률변수에 대해, 하나가 전체에서 차지하는 비율은 베타분포를 따른다.",
+    "bend": 0.25,
+    "derivationMethod": "jacobian",
+    "isBinary": true,
+    "derivation": [
+      {
+        "latex": "Y = \\frac{X_1}{X_1+X_2},\\qquad W = X_1+X_2",
+        "explanationKo": "야코비안 기법을 쓰려면 변수 개수를 맞춰야 한다. 관심 없는 방향으로 보조변수 W를 잡는다."
+      },
+      {
+        "latex": "X_1 = YW,\\quad X_2 = W(1-Y),\\qquad |J| = W",
+        "explanationKo": "역변환을 구하고 야코비안 행렬식을 계산하면 W가 나온다."
+      },
+      {
+        "latex": "f_{Y,W}(y,w) = \\frac{\\lambda^{\\alpha+\\beta}}{\\Gamma(\\alpha)\\Gamma(\\beta)}(yw)^{\\alpha-1}\\{w(1-y)\\}^{\\beta-1}e^{-\\lambda w}\\cdot w",
+        "explanationKo": "결합밀도에 대입한다. 지수부가 e^{−λ(x₁+x₂)} = e^{−λw} 로 묶이는 것이 핵심이다. 두 λ가 같아야 이 묶음이 가능하다."
+      },
+      {
+        "latex": "= \\underbrace{\\frac{y^{\\alpha-1}(1-y)^{\\beta-1}}{B(\\alpha,\\beta)}}_{\\text{Beta}(\\alpha,\\beta)} \\times \\underbrace{\\frac{\\lambda^{\\alpha+\\beta}}{\\Gamma(\\alpha+\\beta)}w^{\\alpha+\\beta-1}e^{-\\lambda w}}_{\\Gamma(\\alpha+\\beta,\\lambda)}",
+        "explanationKo": "y만의 함수와 w만의 함수로 완전히 분리된다. 따라서 Y와 W는 독립이고, Y ~ Beta(α,β), W ~ Gamma(α+β, λ) 다."
+      }
+    ],
+    "edgeLabelLatex": "\\dfrac{X_1}{X_1+X_2}",
+    "simulation": {
+      "recipe": "gammaToBeta",
+      "titleKo": "두 감마의 비율이 베타가 되는가",
+      "noteKo": "같은 λ를 갖는 Γ(α,λ)와 Γ(β,λ)에서 뽑아 X₁/(X₁+X₂)를 계산하고 Beta(α,β)와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "alpha",
+          "nameKo": "α",
+          "min": 0.5,
+          "max": 10,
+          "step": 0.5,
+          "default": 2
+        },
+        {
+          "symbol": "beta",
+          "nameKo": "β",
+          "min": 0.5,
+          "max": 10,
+          "step": 0.5,
+          "default": 5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E12",
+    "from": "beta",
+    "to": "unif01",
+    "type": "special",
+    "conditionLatex": "\\alpha = \\beta = 1",
+    "transformLatex": null,
+    "summaryKo": "베타분포에서 두 형상모수가 모두 1이면 표준균등분포가 된다.",
+    "bend": 0.1,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "f(x) = \\frac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha,\\beta)}",
+        "explanationKo": "베타분포의 밀도함수에서 출발한다."
+      },
+      {
+        "latex": "B(1,1) = \\frac{\\Gamma(1)\\Gamma(1)}{\\Gamma(2)} = \\frac{1\\cdot 1}{1} = 1",
+        "explanationKo": "α=β=1을 대입하면 베타함수 값이 1이다."
+      },
+      {
+        "latex": "f(x) = x^{0}(1-x)^{0} = 1,\\quad 0<x<1",
+        "explanationKo": "밀도가 상수 1이 되어 표준균등분포와 같다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E13",
+    "from": "unif01",
+    "to": "exponential",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = -\\dfrac{1}{\\lambda}\\ln X",
+    "summaryKo": "표준균등확률변수에 −ln을 취하고 λ로 나누면 지수분포가 된다. 역변환 표본추출의 대표 예다.",
+    "bend": 0.16,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X \\sim U(0,1),\\quad Y = -\\frac{1}{\\lambda}\\ln X",
+        "explanationKo": "0<X<1 이므로 ln X < 0 이고, 앞의 음부호 덕분에 Y>0 이 보장된다."
+      },
+      {
+        "latex": "F_Y(y) = P\\!\\left(-\\tfrac{1}{\\lambda}\\ln X \\le y\\right) = P(\\ln X \\ge -\\lambda y) = P(X \\ge e^{-\\lambda y})",
+        "explanationKo": "음수를 곱하므로 부등호 방향이 뒤집힌다."
+      },
+      {
+        "latex": "= 1 - e^{-\\lambda y},\\quad y>0",
+        "explanationKo": "X가 균등분포이므로 P(X ≥ c) = 1 − c 다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{Exp}(\\lambda)",
+        "explanationKo": "지수분포의 CDF와 일치한다. 일반적으로 F⁻¹(U)는 CDF가 F인 분포를 따르며, 이것이 시뮬레이션에서 쓰이는 역변환 표본추출이다."
+      }
+    ],
+    "edgeLabelLatex": "-\\lambda^{-1}\\ln X",
+    "simulation": {
+      "recipe": "invTransformExp",
+      "titleKo": "역변환 표본추출 — 균등에서 지수 만들기",
+      "noteKo": "U(0,1) 난수에 −ln(U)/λ 를 적용한 표본을 Exp(λ)의 이론 밀도와 겹쳐 봅니다. 시뮬레이션에서 지수 난수를 만드는 표준 방법입니다.",
+      "controls": [
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E14",
+    "from": "exponential",
+    "to": "unif01",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = e^{-\\lambda X}",
+    "summaryKo": "지수확률변수에 e^(−λX)를 취하면 표준균등분포가 된다. E13의 역변환이자 확률적분변환의 한 사례다.",
+    "bend": 0.16,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X \\sim \\mathrm{Exp}(\\lambda),\\quad Y = e^{-\\lambda X}",
+        "explanationKo": "X>0 이므로 0<Y<1 이다."
+      },
+      {
+        "latex": "F_Y(y) = P(e^{-\\lambda X}\\le y) = P\\!\\left(X \\ge -\\tfrac{1}{\\lambda}\\ln y\\right)",
+        "explanationKo": "로그를 취하고 음수를 곱해 정리하면 부등호가 뒤집힌다."
+      },
+      {
+        "latex": "= e^{-\\lambda\\left(-\\frac{1}{\\lambda}\\ln y\\right)} = e^{\\ln y} = y,\\quad 0<y<1",
+        "explanationKo": "지수분포의 생존함수에 대입하면 지수와 로그가 상쇄되어 y만 남는다."
+      },
+      {
+        "latex": "Y \\sim U(0,1)",
+        "explanationKo": "CDF가 F(y)=y 이므로 표준균등분포다. 사실 Y = 1 − F_X(X) 이며, 어떤 연속분포든 자기 CDF를 씌우면 균등분포가 된다(확률적분변환)."
+      }
+    ],
+    "edgeLabelLatex": "e^{-\\lambda X}",
+    "simulation": {
+      "recipe": "expToUnif",
+      "titleKo": "exp(−λX) 가 균등이 되는가",
+      "noteKo": "Exp(λ)에서 뽑아 e^(−λX)를 계산한 표본입니다. 히스토그램이 평평해지면 U(0,1)입니다.",
+      "controls": [
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E15",
+    "from": "unif01",
+    "to": "unifab",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = a + (b-a)X",
+    "summaryKo": "표준균등확률변수를 늘리고 평행이동하면 임의의 구간 균등분포가 된다.",
+    "bend": 0.12,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X \\sim U(0,1),\\quad Y = a+(b-a)X,\\ b>a",
+        "explanationKo": "구간 (0,1)을 (a,b)로 선형사상한다."
+      },
+      {
+        "latex": "F_Y(y) = P\\!\\left(X \\le \\frac{y-a}{b-a}\\right) = \\frac{y-a}{b-a},\\quad a<y<b",
+        "explanationKo": "b−a>0 이므로 부등호가 유지된다."
+      },
+      {
+        "latex": "f_Y(y) = \\frac{1}{b-a}",
+        "explanationKo": "미분하면 상수 밀도가 나온다. 구간이 (b−a)배 늘어난 만큼 높이가 그 역수로 줄어든다."
+      }
+    ],
+    "edgeLabelLatex": "a+(b-a)X",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E16",
+    "from": "unifab",
+    "to": "unif01",
+    "type": "special",
+    "conditionLatex": "a = 0,\\ b = 1",
+    "transformLatex": null,
+    "summaryKo": "균등분포에서 a=0, b=1이면 표준균등분포다.",
+    "bend": 0.12,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "f(x) = \\frac{1}{b-a},\\quad a<x<b",
+        "explanationKo": "균등분포의 밀도함수다."
+      },
+      {
+        "latex": "a=0,\\ b=1 \\;\\Rightarrow\\; f(x) = 1,\\quad 0<x<1",
+        "explanationKo": "대입하면 곧바로 표준균등분포가 된다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E17",
+    "from": "chisq",
+    "to": "exponential",
+    "type": "special",
+    "conditionLatex": "m = 2",
+    "transformLatex": null,
+    "summaryKo": "자유도 2인 카이제곱분포는 λ=1/2인 지수분포와 같다.",
+    "bend": 0.2,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "f(x) = \\frac{1}{2^{m/2}\\Gamma(m/2)}x^{m/2-1}e^{-x/2}",
+        "explanationKo": "카이제곱분포의 밀도함수다."
+      },
+      {
+        "latex": "m=2 \\;\\Rightarrow\\; 2^{1}\\Gamma(1) = 2,\\quad x^{0}=1",
+        "explanationKo": "m=2를 대입하면 상수 항이 2가 되고 거듭제곱 항이 사라진다."
+      },
+      {
+        "latex": "f(x) = \\tfrac{1}{2}e^{-x/2}",
+        "explanationKo": "λ=1/2인 지수분포의 밀도함수다. 평균도 m=2 = 1/λ 로 일치한다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E18",
+    "from": "exponential",
+    "to": "chisq",
+    "type": "special",
+    "conditionLatex": "\\lambda = \\dfrac{1}{2}",
+    "transformLatex": null,
+    "summaryKo": "λ=1/2인 지수분포는 자유도 2인 카이제곱분포와 같다. E17의 역방향이다.",
+    "bend": 0.2,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "f(x) = \\lambda e^{-\\lambda x},\\quad \\lambda = \\tfrac{1}{2}",
+        "explanationKo": "지수분포에 λ=1/2을 대입한다."
+      },
+      {
+        "latex": "f(x) = \\tfrac{1}{2}e^{-x/2}",
+        "explanationKo": "이는 χ²(2)의 밀도함수와 같다."
+      },
+      {
+        "latex": "\\mathrm{Exp}(\\tfrac{1}{2}) = \\mathrm{Gamma}(1, \\tfrac{1}{2}) = \\chi^2(2)",
+        "explanationKo": "감마분포를 거쳐 보면 r=1=m/2, 즉 m=2 임이 분명해진다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E19",
+    "from": "chisq",
+    "to": "chisq",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\sum_i X_i \\sim \\chi^2\\!\\left(\\sum_i m_i\\right)",
+    "summaryKo": "독립인 카이제곱확률변수들의 합은 다시 카이제곱분포이며, 자유도가 더해진다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": 44
+    },
+    "selfLoop": true,
+    "selfLoopBelow": true,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = (1-2t)^{-m_i/2},\\quad t<\\tfrac{1}{2}",
+        "explanationKo": "카이제곱분포의 적률생성함수다."
+      },
+      {
+        "latex": "M_Y(t) = \\prod_i (1-2t)^{-m_i/2} = (1-2t)^{-\\frac{1}{2}\\sum_i m_i}",
+        "explanationKo": "독립이므로 MGF가 곱해지고, 밑이 같으므로 지수부가 더해진다."
+      },
+      {
+        "latex": "Y \\sim \\chi^2\\!\\left(\\sum_i m_i\\right)",
+        "explanationKo": "자유도가 더해진 카이제곱분포다. 자유도를 '제곱해서 더한 표준정규의 개수'로 읽으면 당연한 결과다."
+      }
+    ],
+    "edgeLabelLatex": "\\sum_i X_i",
+    "simulation": {
+      "recipe": "sumChisq",
+      "titleKo": "카이제곱의 합에서 자유도가 더해지는가",
+      "noteKo": "χ²(m₁)과 χ²(m₂)에서 각각 뽑아 더한 표본을 χ²(m₁+m₂)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "m1",
+          "nameKo": "m₁",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "symbol": "m2",
+          "nameKo": "m₂",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E20",
+    "from": "chisq",
+    "to": "f",
+    "type": "transform",
+    "conditionLatex": "X_1\\sim\\chi^2(r_1),\\ X_2\\sim\\chi^2(r_2) \\text{ 독립}",
+    "transformLatex": "Y = \\dfrac{X_1/r_1}{X_2/r_2}",
+    "summaryKo": "각각 자유도로 나눈 두 독립 카이제곱확률변수의 비는 F 분포를 따른다. F 분포의 정의다.",
+    "bend": 0.2,
+    "derivationMethod": "jacobian",
+    "isBinary": true,
+    "derivation": [
+      {
+        "latex": "Y = \\frac{X_1/r_1}{X_2/r_2},\\qquad W = X_2",
+        "explanationKo": "보조변수로 분모를 그대로 잡는다."
+      },
+      {
+        "latex": "X_1 = \\frac{r_1}{r_2}YW,\\qquad |J| = \\frac{r_1}{r_2}W",
+        "explanationKo": "역변환과 야코비안을 구한다."
+      },
+      {
+        "latex": "f_{Y,W}(y,w) \\propto \\left(\\tfrac{r_1}{r_2}yw\\right)^{\\frac{r_1}{2}-1} e^{-\\frac{r_1 y w}{2r_2}} \\cdot w^{\\frac{r_2}{2}-1}e^{-w/2}\\cdot \\tfrac{r_1}{r_2}w",
+        "explanationKo": "두 카이제곱 밀도의 곱에 대입한다."
+      },
+      {
+        "latex": "f_Y(y) = \\int_0^{\\infty} f_{Y,W}(y,w)\\,dw = \\frac{1}{B\\!\\left(\\frac{r_1}{2},\\frac{r_2}{2}\\right)}\\left(\\frac{r_1}{r_2}\\right)^{\\frac{r_1}{2}}\\frac{y^{\\frac{r_1}{2}-1}}{\\left(1+\\frac{r_1}{r_2}y\\right)^{\\frac{r_1+r_2}{2}}}",
+        "explanationKo": "w에 대해 적분하면 감마적분이 나오고, 정리하면 F 분포의 밀도함수를 얻는다."
+      }
+    ],
+    "edgeLabelLatex": "\\dfrac{X_1/r_1}{X_2/r_2}",
+    "simulation": {
+      "recipe": "chisqToF",
+      "titleKo": "두 카이제곱의 비가 F 가 되는가",
+      "noteKo": "χ²(r₁)과 χ²(r₂)를 각각 자유도로 나눈 비를 F(r₁,r₂)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "r1",
+          "nameKo": "r₁",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "symbol": "r2",
+          "nameKo": "r₂",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E21",
+    "from": "t",
+    "to": "f",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = X^2 \\sim F(1, n)",
+    "summaryKo": "t 확률변수를 제곱하면 분자 자유도가 1인 F 분포가 된다.",
+    "bend": 0.16,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "T = \\frac{Z}{\\sqrt{V/n}},\\quad Z\\sim N(0,1),\\ V\\sim\\chi^2(n) \\text{ 독립}",
+        "explanationKo": "t 분포의 정의에서 출발한다 (E27)."
+      },
+      {
+        "latex": "T^2 = \\frac{Z^2}{V/n} = \\frac{Z^2/1}{V/n}",
+        "explanationKo": "제곱하면 분자와 분모가 모두 카이제곱을 자유도로 나눈 형태가 된다."
+      },
+      {
+        "latex": "Z^2 \\sim \\chi^2(1)",
+        "explanationKo": "E26에 의해 표준정규의 제곱은 자유도 1인 카이제곱이다."
+      },
+      {
+        "latex": "T^2 = \\frac{\\chi^2(1)/1}{\\chi^2(n)/n} \\sim F(1, n)",
+        "explanationKo": "F 분포의 정의(E20)와 정확히 일치한다. t 검정의 제곱이 F 검정과 같아지는 이유가 여기 있다."
+      }
+    ],
+    "edgeLabelLatex": "X^2",
+    "simulation": {
+      "recipe": "tSquared",
+      "titleKo": "t 를 제곱하면 F(1, n) 인가",
+      "noteKo": "t(n)에서 뽑아 제곱한 표본을 F(1,n)의 이론 밀도와 겹쳐 봅니다. t 검정의 제곱이 F 검정과 같아지는 이유입니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "자유도 n",
+          "min": 1,
+          "max": 50,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E22",
+    "from": "beta",
+    "to": "normal",
+    "type": "limit",
+    "conditionLatex": "\\alpha = \\beta \\to \\infty",
+    "transformLatex": null,
+    "summaryKo": "베타분포에서 두 형상모수를 같게 두고 함께 크게 하면 정규분포에 가까워진다.",
+    "bend": 0.18,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "limitDemo": {
+      "varyParams": {
+        "alpha": "k",
+        "beta": "k"
+      },
+      "from": 1,
+      "to": 200,
+      "targetDist": "normal",
+      "targetFromMoments": true
+    },
+    "derivation": [
+      {
+        "latex": "X \\sim \\mathrm{Beta}(\\alpha,\\alpha),\\quad E(X)=\\tfrac{1}{2},\\ \\mathrm{Var}(X)=\\frac{1}{4(2\\alpha+1)}",
+        "explanationKo": "α=β이면 분포는 1/2을 중심으로 대칭이고, α가 커질수록 분산이 0으로 줄어든다."
+      },
+      {
+        "latex": "X = \\frac{X_1}{X_1+X_2},\\quad X_1,X_2\\sim\\Gamma(\\alpha,\\lambda) \\text{ 독립}",
+        "explanationKo": "E11에 의해 베타는 두 감마의 비로 표현된다."
+      },
+      {
+        "latex": "\\alpha\\to\\infty \\;\\Rightarrow\\; X_1, X_2 \\text{ 각각 정규에 근사 (E23)}",
+        "explanationKo": "감마의 형상모수가 커지면 정규에 근사하므로, 그 비도 정규에 근사한다."
+      },
+      {
+        "latex": "\\frac{X-\\frac{1}{2}}{\\sqrt{1/(4(2\\alpha+1))}} \\;\\xrightarrow{d}\\; N(0,1)",
+        "explanationKo": "표준화하면 표준정규로 수렴한다. 슬라이더로 α를 키우며 참조 곡선과 겹쳐 보라."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E23",
+    "from": "gamma",
+    "to": "normal",
+    "type": "limit",
+    "conditionLatex": "r \\to \\infty,\\quad \\mu = \\dfrac{r}{\\lambda},\\ \\sigma^2 = \\dfrac{r}{\\lambda^{2}}",
+    "transformLatex": null,
+    "summaryKo": "감마분포에서 형상모수 r을 크게 하면 정규분포에 가까워진다. 사실상 중심극한정리 그 자체다.",
+    "bend": 0.12,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "isCltInstance": true,
+    "note": "원본 다이어그램은 μ=rλ, σ²=rλ²로 표기했으나 이는 scale 모수화다. rate 모수화에서는 μ=r/λ, σ²=r/λ² 다 (PRD §11.2).",
+    "limitDemo": {
+      "varyParams": {
+        "r": "k"
+      },
+      "fixed": {
+        "lambda": 1
+      },
+      "from": 1,
+      "to": 200,
+      "targetDist": "normal",
+      "targetFromMoments": true
+    },
+    "derivation": [
+      {
+        "latex": "X \\sim \\mathrm{Gamma}(r,\\lambda),\\quad E(X)=\\frac{r}{\\lambda},\\ \\mathrm{Var}(X)=\\frac{r}{\\lambda^{2}}",
+        "explanationKo": "rate 모수화에서의 평균과 분산이다."
+      },
+      {
+        "latex": "r \\text{ 이 정수이면 } X = \\sum_{i=1}^{r} Y_i,\\quad Y_i \\sim \\mathrm{Exp}(\\lambda) \\text{ 독립}",
+        "explanationKo": "E9에 의해 감마는 지수확률변수 r개의 합이다. 이것이 핵심이다."
+      },
+      {
+        "latex": "\\frac{X - r/\\lambda}{\\sqrt{r}/\\lambda} = \\frac{\\sum_i Y_i - rE(Y)}{\\sqrt{r\\,\\mathrm{Var}(Y)}} \\;\\xrightarrow{d}\\; N(0,1)",
+        "explanationKo": "독립 동일분포 확률변수의 합을 표준화한 형태이므로, 중심극한정리가 그대로 적용된다."
+      },
+      {
+        "latex": "\\text{따라서 } X \\;\\approx\\; N\\!\\left(\\frac{r}{\\lambda},\\ \\frac{r}{\\lambda^{2}}\\right) \\text{ for large } r",
+        "explanationKo": "이 엣지는 별개의 정리가 아니라 중심극한정리의 한 사례다. '일반 정리로 보기'에서 임의의 분포로 확인해 보라."
+      }
+    ],
+    "edgeLabelLatex": "r \\to \\infty",
+    "simulation": {
+      "recipe": "gammaNormalApprox",
+      "titleKo": "형상모수가 커지면 정규가 되는가",
+      "noteKo": "Gamma(r, λ)에서 뽑아 표준화한 표본을 N(0,1)과 겹쳐 봅니다. r을 키우면 겹쳐집니다 — 중심극한정리의 한 사례입니다.",
+      "controls": [
+        {
+          "symbol": "r",
+          "nameKo": "형상모수 r",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "default": 2
+        },
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.3,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E24",
+    "from": "t",
+    "to": "stdnormal",
+    "type": "limit",
+    "conditionLatex": "n \\to \\infty",
+    "transformLatex": null,
+    "summaryKo": "t 분포는 자유도가 커질수록 표준정규분포에 수렴한다.",
+    "bend": 0.22,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "limitDemo": {
+      "varyParams": {
+        "n": "k"
+      },
+      "from": 1,
+      "to": 200,
+      "targetDist": "stdnormal",
+      "targetParams": {}
+    },
+    "derivation": [
+      {
+        "latex": "T = \\frac{Z}{\\sqrt{V/n}},\\quad V\\sim\\chi^2(n)",
+        "explanationKo": "t 분포의 정의다. 분모가 확률변수인 것이 정규분포와의 유일한 차이다."
+      },
+      {
+        "latex": "E\\!\\left(\\frac{V}{n}\\right) = 1,\\qquad \\mathrm{Var}\\!\\left(\\frac{V}{n}\\right) = \\frac{2}{n} \\to 0",
+        "explanationKo": "V/n 의 평균은 항상 1이고 분산은 n이 커질수록 0으로 간다."
+      },
+      {
+        "latex": "\\frac{V}{n} \\;\\xrightarrow{p}\\; 1 \\;\\Rightarrow\\; T \\;\\xrightarrow{d}\\; Z \\sim N(0,1)",
+        "explanationKo": "분모가 상수 1로 확률수렴하므로 슬러츠키 정리에 의해 T는 Z와 같은 극한분포를 갖는다. 즉 표본표준편차가 모표준편차만큼 정확해지는 것이다."
+      },
+      {
+        "latex": "\\left(1+\\frac{x^2}{n}\\right)^{-\\frac{n+1}{2}} \\to e^{-x^2/2}",
+        "explanationKo": "밀도함수에서 직접 확인해도 같은 결론이 나온다."
+      }
+    ],
+    "simulation": {
+      "recipe": "tToNormal",
+      "titleKo": "자유도가 커지면 표준정규가 되는가",
+      "noteKo": "t(n)에서 뽑은 표본을 N(0,1)과 겹쳐 봅니다. n=1(코시)에서는 꼬리가 훨씬 두껍습니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "자유도 n",
+          "min": 1,
+          "max": 200,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E25",
+    "from": "f",
+    "to": "chisq",
+    "type": "limit",
+    "conditionLatex": "r_2 \\to \\infty",
+    "transformLatex": "Y = r_1 X",
+    "summaryKo": "F 분포에서 분모 자유도를 크게 하고 r₁을 곱하면 자유도 r₁인 카이제곱분포에 수렴한다.",
+    "bend": 0.12,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "limitDemo": {
+      "varyParams": {
+        "r2": "k"
+      },
+      "fixed": {
+        "r1": 5
+      },
+      "from": 1,
+      "to": 300,
+      "targetDist": "chisq",
+      "targetParams": {
+        "m": 5
+      },
+      "scaleBy": "r1"
+    },
+    "derivation": [
+      {
+        "latex": "X = \\frac{X_1/r_1}{X_2/r_2},\\quad X_1\\sim\\chi^2(r_1),\\ X_2\\sim\\chi^2(r_2)",
+        "explanationKo": "F 분포의 정의(E20)에서 출발한다."
+      },
+      {
+        "latex": "E\\!\\left(\\frac{X_2}{r_2}\\right)=1,\\qquad \\mathrm{Var}\\!\\left(\\frac{X_2}{r_2}\\right)=\\frac{2}{r_2}\\to 0",
+        "explanationKo": "분모가 1로 확률수렴한다. E24와 완전히 같은 구조다."
+      },
+      {
+        "latex": "r_1 X = \\frac{X_1}{X_2/r_2} \\;\\xrightarrow{d}\\; X_1 \\sim \\chi^2(r_1)",
+        "explanationKo": "분모가 사라지면 분자만 남는다. F 분포표의 마지막 행(r₂=∞)이 카이제곱표와 같은 이유다."
+      }
+    ],
+    "edgeLabelLatex": "r_1X,\\ r_2\\to\\infty",
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E26",
+    "from": "stdnormal",
+    "to": "chisq",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = Z^2 \\sim \\chi^2(1)",
+    "summaryKo": "표준정규확률변수를 제곱하면 자유도 1인 카이제곱분포가 된다. 카이제곱분포의 정의다.",
+    "bend": 0.3,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "isAugmented": true,
+    "derivation": [
+      {
+        "latex": "Z\\sim N(0,1),\\quad Y = Z^2",
+        "explanationKo": "제곱은 단조함수가 아니므로 CDF 기법을 쓸 때 양쪽 근을 모두 세어야 한다."
+      },
+      {
+        "latex": "F_Y(y) = P(Z^2\\le y) = P(-\\sqrt{y}\\le Z\\le\\sqrt{y}) = 2\\Phi(\\sqrt{y})-1,\\quad y>0",
+        "explanationKo": "대칭성을 이용해 정리한다."
+      },
+      {
+        "latex": "f_Y(y) = 2\\varphi(\\sqrt{y})\\cdot\\frac{1}{2\\sqrt{y}} = \\frac{1}{\\sqrt{2\\pi}}y^{-1/2}e^{-y/2}",
+        "explanationKo": "미분한다. 연쇄법칙의 1/(2√y) 인자가 y^(−1/2) 항을 만든다."
+      },
+      {
+        "latex": "= \\frac{1}{2^{1/2}\\Gamma(1/2)}y^{1/2-1}e^{-y/2} \\;=\\; \\chi^2(1)",
+        "explanationKo": "Γ(1/2)=√π 를 쓰면 자유도 1인 카이제곱 밀도와 정확히 일치한다. 여기에 E19를 더하면 ΣZᵢ² ~ χ²(n) 을 얻는다."
+      }
+    ],
+    "edgeLabelLatex": "Z^2",
+    "simulation": {
+      "recipe": "sumSqNormal",
+      "titleKo": "표준정규 제곱의 합이 카이제곱인가",
+      "noteKo": "N(0,1)에서 m개를 뽑아 각각 제곱해 더한 표본을 χ²(m)의 이론 밀도와 겹쳐 봅니다. m=1이면 E26 그 자체입니다.",
+      "controls": [
+        {
+          "symbol": "m",
+          "nameKo": "개수 m",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E27",
+    "from": "chisq",
+    "to": "t",
+    "type": "transform",
+    "conditionLatex": "Z\\sim N(0,1),\\ V\\sim\\chi^2(n) \\text{ 독립}",
+    "transformLatex": "T = \\dfrac{Z}{\\sqrt{V/n}}",
+    "summaryKo": "표준정규확률변수를, 자유도로 나눈 카이제곱의 제곱근으로 나누면 t 분포가 된다. t 분포의 정의다.",
+    "bend": 0.15,
+    "derivationMethod": "jacobian",
+    "isBinary": true,
+    "isAugmented": true,
+    "derivation": [
+      {
+        "latex": "T = \\frac{Z}{\\sqrt{V/n}},\\qquad W = V",
+        "explanationKo": "보조변수로 카이제곱 쪽을 그대로 잡는다."
+      },
+      {
+        "latex": "Z = T\\sqrt{W/n},\\qquad |J| = \\sqrt{W/n}",
+        "explanationKo": "역변환과 야코비안을 구한다."
+      },
+      {
+        "latex": "f_{T,W}(t,w) = \\frac{1}{\\sqrt{2\\pi}}e^{-\\frac{t^2 w}{2n}}\\cdot\\frac{w^{n/2-1}e^{-w/2}}{2^{n/2}\\Gamma(n/2)}\\cdot\\sqrt{\\frac{w}{n}}",
+        "explanationKo": "독립이므로 결합밀도는 두 밀도의 곱이다. 지수부가 −(w/2)(1+t²/n) 로 묶인다."
+      },
+      {
+        "latex": "f_T(t) = \\int_0^{\\infty}\\! f_{T,W}\\,dw = \\frac{\\Gamma\\!\\left(\\frac{n+1}{2}\\right)}{\\sqrt{n\\pi}\\,\\Gamma\\!\\left(\\frac{n}{2}\\right)}\\left(1+\\frac{t^2}{n}\\right)^{-\\frac{n+1}{2}}",
+        "explanationKo": "w에 대해 감마적분을 하면 t 분포의 밀도함수가 나온다. 모표준편차 σ 대신 표본표준편차를 쓸 때 정확히 이 구조가 나타난다."
+      }
+    ],
+    "edgeLabelLatex": "\\dfrac{Z}{\\sqrt{V/n}}",
+    "simulation": {
+      "recipe": "defineT",
+      "titleKo": "Z / √(V/n) 이 t 분포인가",
+      "noteKo": "N(0,1)과 χ²(n)에서 독립으로 뽑아 T = Z/√(V/n) 을 계산하고 t(n)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "자유도 n",
+          "min": 1,
+          "max": 50,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E28",
+    "from": "beta",
+    "to": "beta",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = 1 - X \\sim \\mathrm{Beta}(\\beta, \\alpha)",
+    "edgeLabelLatex": "1-X",
+    "summaryKo": "베타확률변수를 1에서 빼면 두 형상모수가 서로 바뀐 베타분포가 된다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": 0
+    },
+    "selfLoop": true,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "isAugmented": true,
+    "derivation": [
+      {
+        "latex": "X \\sim \\mathrm{Beta}(\\alpha,\\beta),\\quad Y = 1-X",
+        "explanationKo": "구간 (0,1)을 좌우로 뒤집는 변환이다."
+      },
+      {
+        "latex": "F_Y(y) = P(1-X \\le y) = P(X \\ge 1-y) = 1 - F_X(1-y)",
+        "explanationKo": "음수를 곱하므로 부등호가 뒤집힌다."
+      },
+      {
+        "latex": "f_Y(y) = f_X(1-y) = \\frac{(1-y)^{\\alpha-1}y^{\\beta-1}}{B(\\alpha,\\beta)}",
+        "explanationKo": "미분하면 두 번의 부호 반전이 상쇄되어 부호가 그대로 남는다."
+      },
+      {
+        "latex": "= \\frac{y^{\\beta-1}(1-y)^{\\alpha-1}}{B(\\beta,\\alpha)} \\;=\\; \\mathrm{Beta}(\\beta,\\alpha)",
+        "explanationKo": "B(α,β)=B(β,α) 이므로 형상모수만 자리를 바꾼 베타분포다. α=β이면 분포가 좌우대칭이라는 사실이 여기서 따라온다."
+      }
+    ],
+    "simulation": {
+      "recipe": "betaFlip",
+      "titleKo": "1−X 가 정말 α와 β를 바꾸는가",
+      "noteKo": "Beta(2,5)에서 뽑은 표본에 1−X 를 적용하고, Beta(5,2)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "alpha",
+          "nameKo": "α",
+          "min": 0.5,
+          "max": 10,
+          "step": 0.5,
+          "default": 2
+        },
+        {
+          "symbol": "beta",
+          "nameKo": "β",
+          "min": 0.5,
+          "max": 10,
+          "step": 0.5,
+          "default": 5
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E29",
+    "from": "f",
+    "to": "f",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = \\dfrac{1}{X} \\sim F(r_2, r_1)",
+    "edgeLabelLatex": "1/X",
+    "summaryKo": "F 확률변수의 역수는 두 자유도가 서로 바뀐 F 분포다.",
+    "bend": 0,
+    "labelOffset": {
+      "dx": -30,
+      "dy": 0
+    },
+    "selfLoop": true,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "isAugmented": true,
+    "derivation": [
+      {
+        "latex": "X = \\frac{U/r_1}{V/r_2},\\quad U\\sim\\chi^2(r_1),\\ V\\sim\\chi^2(r_2) \\text{ 독립}",
+        "explanationKo": "F 분포의 정의(E20)에서 출발한다."
+      },
+      {
+        "latex": "\\frac{1}{X} = \\frac{V/r_2}{U/r_1}",
+        "explanationKo": "역수를 취하면 분자와 분모가 그대로 자리를 바꾼다."
+      },
+      {
+        "latex": "\\frac{1}{X} \\sim F(r_2, r_1)",
+        "explanationKo": "다시 F 분포의 정의 형태이며 자유도 순서만 바뀌었다."
+      },
+      {
+        "latex": "F_{1-p}(r_1,r_2) = \\frac{1}{F_{p}(r_2,r_1)}",
+        "explanationKo": "F 분포표에 상위 분위수만 실려 있어도 하위 분위수를 구할 수 있는 이유가 이것이다."
+      }
+    ],
+    "simulation": {
+      "recipe": "fRecip",
+      "titleKo": "1/X 가 자유도를 뒤바꾸는가",
+      "noteKo": "F(5,10)에서 뽑은 표본의 역수를 F(10,5)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "r1",
+          "nameKo": "r₁",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "symbol": "r2",
+          "nameKo": "r₂",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E30",
+    "from": "beta",
+    "to": "f",
+    "type": "transform",
+    "conditionLatex": "X \\sim \\mathrm{Beta}\\!\\left(\\tfrac{r_1}{2}, \\tfrac{r_2}{2}\\right)",
+    "transformLatex": "Y = \\dfrac{r_2}{r_1}\\cdot\\dfrac{X}{1-X}",
+    "edgeLabelLatex": "\\dfrac{r_2}{r_1}\\dfrac{X}{1-X}",
+    "summaryKo": "형상모수가 자유도의 절반인 베타확률변수를 오즈로 바꾸고 자유도 비를 곱하면 F 분포가 된다.",
+    "bend": -0.42,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "isAugmented": true,
+    "derivation": [
+      {
+        "latex": "X = \\frac{U_1}{U_1+U_2},\\quad U_1\\sim\\Gamma\\!\\left(\\tfrac{r_1}{2},\\tfrac{1}{2}\\right)=\\chi^2(r_1),\\ U_2=\\chi^2(r_2)",
+        "explanationKo": "E11과 E8을 결합하면 Beta(r₁/2, r₂/2)는 두 카이제곱의 비율로 표현된다."
+      },
+      {
+        "latex": "\\frac{X}{1-X} = \\frac{U_1/(U_1+U_2)}{U_2/(U_1+U_2)} = \\frac{U_1}{U_2}",
+        "explanationKo": "오즈로 바꾸면 분모의 합이 상쇄되어 두 카이제곱의 순수한 비가 남는다. 이것이 이 관계의 핵심 단계다."
+      },
+      {
+        "latex": "\\frac{r_2}{r_1}\\cdot\\frac{X}{1-X} = \\frac{U_1/r_1}{U_2/r_2}",
+        "explanationKo": "각각 자유도로 나누기 위해 r₂/r₁ 을 곱한다."
+      },
+      {
+        "latex": "\\sim F(r_1, r_2)",
+        "explanationKo": "F 분포의 정의(E20)와 일치한다. 베타분포와 F 분포는 같은 대상을 유계 구간과 반직선이라는 두 좌표로 본 것이다."
+      }
+    ],
+    "simulation": {
+      "recipe": "betaToF",
+      "titleKo": "베타의 오즈가 F 가 되는가",
+      "noteKo": "Beta(r₁/2, r₂/2)에서 뽑아 (r₂/r₁)·X/(1−X) 로 변환한 뒤 F(r₁,r₂)의 이론 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "r1",
+          "nameKo": "r₁",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "symbol": "r2",
+          "nameKo": "r₂",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "isExtended": true,
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E31",
+    "from": "stdnormal",
+    "to": "unif01",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "Y = \\Phi(Z)",
+    "edgeLabelLatex": "\\Phi(Z)",
+    "summaryKo": "표준정규확률변수에 자기 자신의 누적분포함수를 씌우면 표준균등분포가 된다. 확률적분변환의 한 사례다.",
+    "bend": -0.24,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "isAugmented": true,
+    "isMeta": true,
+    "derivation": [
+      {
+        "latex": "X \\text{ 가 연속이고 } F_X \\text{ 가 순증가일 때},\\quad Y = F_X(X)",
+        "explanationKo": "이 성질은 정규분포만의 것이 아니라 모든 연속분포에서 성립한다. 여기서는 표준정규를 대표 사례로 그렸다."
+      },
+      {
+        "latex": "F_Y(y) = P(F_X(X) \\le y) = P\\!\\left(X \\le F_X^{-1}(y)\\right)",
+        "explanationKo": "F_X 가 순증가이므로 역함수를 취해도 부등호 방향이 유지된다."
+      },
+      {
+        "latex": "= F_X\\!\\left(F_X^{-1}(y)\\right) = y,\\quad 0<y<1",
+        "explanationKo": "함수와 역함수가 상쇄되어 y만 남는다."
+      },
+      {
+        "latex": "Y \\sim U(0,1)",
+        "explanationKo": "CDF가 F(y)=y 이므로 표준균등분포다. 이것이 확률적분변환이며, E14(지수 → 균등)도 같은 정리의 사례다. 역방향으로 읽으면 E13의 역변환 표본추출이 된다."
+      }
+    ],
+    "simulation": {
+      "recipe": "pit",
+      "titleKo": "확률적분변환 — 어떤 분포든 자기 CDF를 씌우면 균등",
+      "noteKo": "원천분포를 바꿔 가며 F(X)의 히스토그램이 평평해지는지 확인합니다. 어떤 분포를 골라도 결과는 U(0,1)입니다.",
+      "sourcePicker": true,
+      "controls": []
+    },
+    "isExtended": true,
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E32",
+    "from": "stdnormal",
+    "to": "cauchy",
+    "type": "transform",
+    "conditionLatex": "Z_1, Z_2 \\sim N(0,1) \\text{ 독립}",
+    "transformLatex": "Y = \\dfrac{Z_1}{Z_2}",
+    "summaryKo": "독립인 두 표준정규의 비는 코시분포를 따른다. 분모가 0 근처를 자주 지나가는 것이 두꺼운 꼬리의 원인이다. Z₁/|Z₂| 를 써도 같은 분포가 된다.",
+    "bend": -0.22,
+    "derivationMethod": "cdf",
+    "isBinary": true,
+    "edgeLabelLatex": "\\dfrac{Z_1}{Z_2}",
+    "derivation": [
+      {
+        "latex": "Y = \\frac{Z_1}{Z_2},\\qquad W = Z_2",
+        "explanationKo": "야코비안 기법을 위해 보조변수 W = Z₂ 를 잡는다. 역변환은 Z₁ = YW, Z₂ = W 이고 |J| = |W| 다."
+      },
+      {
+        "latex": "f_{Y,W}(y,w) = \\frac{1}{2\\pi}e^{-\\frac{1}{2}(y^2w^2+w^2)}\\,|w|",
+        "explanationKo": "독립인 두 표준정규의 결합밀도에 대입하고 야코비안 |w| 를 곱한다."
+      },
+      {
+        "latex": "f_Y(y) = \\int_{-\\infty}^{\\infty}\\frac{|w|}{2\\pi}e^{-\\frac{w^2}{2}(1+y^2)}dw = \\frac{1}{\\pi}\\int_{0}^{\\infty} w\\,e^{-\\frac{w^2}{2}(1+y^2)}dw",
+        "explanationKo": "W 를 적분해 없앤다. 피적분함수가 짝함수이므로 양수 쪽만 두 배로 계산한다."
+      },
+      {
+        "latex": "= \\frac{1}{\\pi}\\cdot\\frac{1}{1+y^2} = \\text{Cauchy}(0,1)",
+        "explanationKo": "u = w²/2 로 치환하면 그대로 적분된다. 표준코시의 밀도다."
+      }
+    ],
+    "simulation": {
+      "recipe": "cauchyRatio",
+      "titleKo": "두 표준정규의 비가 코시가 되는가",
+      "noteKo": "Z₁/Z₂ 를 반복해 히스토그램을 그리고 표준코시 밀도와 겹쳐 봅니다. 꼬리가 워낙 길어 표시 범위를 벗어나는 표본이 늘 생깁니다.",
+      "controls": []
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E33",
+    "from": "cauchy",
+    "to": "cauchy",
+    "type": "transform",
+    "conditionLatex": "X \\sim \\mathrm{Cauchy}(0,1)",
+    "transformLatex": "Y = \\dfrac{1}{X}",
+    "summaryKo": "표준코시의 역수는 다시 표준코시다. 0 근처의 값이 큰 값으로, 큰 값이 0 근처로 뒤집히는데도 분포가 그대로라는 것이 두꺼운 꼬리의 성질을 잘 보여 준다.",
+    "selfLoopBelow": false,
+    "labelOffset": {
+      "dx": 0,
+      "dy": -4
+    },
+    "derivationMethod": "cdf",
+    "edgeLabelLatex": "1/X",
+    "derivation": [
+      {
+        "latex": "y = 1/x \\;\\Rightarrow\\; x = 1/y,\\qquad \\left|\\frac{dx}{dy}\\right| = \\frac{1}{y^2}",
+        "explanationKo": "일대일 변환이므로 변수변환 공식을 그대로 쓴다(x>0, x<0 두 구간에서 각각 단조)."
+      },
+      {
+        "latex": "f_Y(y) = \\frac{1}{\\pi\\left(1+\\frac{1}{y^{2}}\\right)}\\cdot\\frac{1}{y^{2}} = \\frac{1}{\\pi(y^{2}+1)}",
+        "explanationKo": "대입하고 정리하면 y² 이 약분되어 원래의 표준코시 밀도가 그대로 나온다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E34",
+    "from": "cauchy",
+    "to": "cauchy",
+    "type": "transform",
+    "conditionLatex": "X_1,\\dots,X_n \\sim \\mathrm{Cauchy}(x_0,\\gamma) \\text{ 독립}",
+    "transformLatex": "\\bar{X} = \\dfrac{1}{n}\\sum_{i=1}^{n} X_i \\sim \\mathrm{Cauchy}(x_0,\\gamma)",
+    "summaryKo": "코시의 표본평균은 표본크기와 무관하게 **원래와 똑같은 코시분포**다. 표본을 아무리 늘려도 좁아지지 않는다 — 중심극한정리가 성립하지 않는 대표 사례이며, 그 이유는 평균과 분산이 존재하지 않기 때문이다.",
+    "selfLoopBelow": true,
+    "labelOffset": {
+      "dx": 0,
+      "dy": 4
+    },
+    "derivationMethod": "mgf",
+    "edgeLabelLatex": "\\bar{X}",
+    "derivation": [
+      {
+        "latex": "\\varphi_X(t) = E(e^{itX}) = e^{ix_0t-\\gamma|t|}",
+        "explanationKo": "적률생성함수는 존재하지 않지만 특성함수는 언제나 존재한다. 코시의 특성함수는 이 형태다."
+      },
+      {
+        "latex": "\\varphi_{\\sum X_i}(t) = \\left(e^{ix_0t-\\gamma|t|}\\right)^{n} = e^{inx_0t-n\\gamma|t|}",
+        "explanationKo": "독립이므로 합의 특성함수는 곱이다."
+      },
+      {
+        "latex": "\\varphi_{\\bar{X}}(t) = \\varphi_{\\sum X_i}(t/n) = e^{ix_0t-\\gamma|t|}",
+        "explanationKo": "n으로 나누는 것은 t를 t/n으로 바꾸는 것이다. 지수부의 n이 정확히 상쇄되어 원래 특성함수로 되돌아온다."
+      },
+      {
+        "latex": "\\Rightarrow\\ \\bar{X} \\sim \\mathrm{Cauchy}(x_0, \\gamma)\\quad\\text{(n과 무관)}",
+        "explanationKo": "특성함수가 같으므로 분포가 같다. 중심극한정리 화면의 코시 반례가 바로 이 결과다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E35",
+    "from": "t",
+    "to": "cauchy",
+    "type": "special",
+    "conditionLatex": "n = 1",
+    "transformLatex": "t(1) = \\mathrm{Cauchy}(0,1)",
+    "summaryKo": "자유도가 1인 t분포가 곧 표준코시분포다. t의 밀도식에 n=1을 넣으면 그대로 코시의 밀도가 나온다.",
+    "bend": 0.22,
+    "derivationMethod": "algebra",
+    "edgeLabelLatex": "n=1",
+    "derivation": [
+      {
+        "latex": "f_{t(n)}(x) = \\frac{\\Gamma\\!\\left(\\frac{n+1}{2}\\right)}{\\sqrt{n\\pi}\\,\\Gamma\\!\\left(\\frac{n}{2}\\right)}\\left(1+\\frac{x^{2}}{n}\\right)^{-\\frac{n+1}{2}}",
+        "explanationKo": "t분포의 밀도에서 출발한다."
+      },
+      {
+        "latex": "n=1:\\quad \\frac{\\Gamma(1)}{\\sqrt{\\pi}\\,\\Gamma(1/2)}\\left(1+x^{2}\\right)^{-1} = \\frac{1}{\\pi(1+x^{2})}",
+        "explanationKo": "Γ(1)=1, Γ(1/2)=√π 이므로 계수가 1/π 로 정리되고 지수는 −1이 된다. 표준코시의 밀도다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E36",
+    "from": "exponential",
+    "to": "weibull",
+    "type": "transform",
+    "conditionLatex": "X \\sim \\mathrm{Exp}(a),\\ b>0",
+    "transformLatex": "Y = X^{1/b}",
+    "summaryKo": "지수확률변수를 1/b 제곱하면 와이블분포가 된다. 시간축을 비선형으로 늘이고 줄여 고장률이 시간에 따라 변하게 만드는 것이다.",
+    "bend": 0.28,
+    "derivationMethod": "cdf",
+    "edgeLabelLatex": "X^{1/b}",
+    "derivation": [
+      {
+        "latex": "F_Y(y) = P(X^{1/b}\\le y) = P(X \\le y^{b})",
+        "explanationKo": "1/b 제곱은 양수 구간에서 증가함수이므로 부등호 방향이 유지된다."
+      },
+      {
+        "latex": "= 1-e^{-a y^{b}}",
+        "explanationKo": "지수분포의 CDF에 y^b 를 대입한 것이다. 이것이 곧 Weibull(a,b)의 CDF다."
+      },
+      {
+        "latex": "f_Y(y) = \\frac{d}{dy}\\left(1-e^{-ay^{b}}\\right) = ab\\,y^{b-1}e^{-ay^{b}}",
+        "explanationKo": "미분하면 와이블 밀도가 나온다. b=1을 넣으면 ae^(−ay), 즉 지수분포로 되돌아간다."
+      }
+    ],
+    "simulation": {
+      "recipe": "expToWeibull",
+      "titleKo": "지수의 1/b 제곱이 와이블이 되는가",
+      "noteKo": "Exp(a)에서 뽑아 X^(1/b) 를 계산하고 Weibull(a,b) 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "a",
+          "nameKo": "a (rate)",
+          "min": 0.2,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        },
+        {
+          "symbol": "b",
+          "nameKo": "b (형상)",
+          "min": 0.4,
+          "max": 4,
+          "step": 0.1,
+          "default": 2
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E37",
+    "from": "weibull",
+    "to": "exponential",
+    "type": "special",
+    "conditionLatex": "b = 1",
+    "transformLatex": "\\mathrm{Weibull}(a, 1) = \\mathrm{Exp}(a)",
+    "summaryKo": "형상모수가 1이면 위험률 abx^(b−1) 이 상수 a가 되어 고장률이 시간에 무관해진다. 곧 지수분포이며, 기억이 없는 성질도 이때만 성립한다.",
+    "bend": 0.28,
+    "derivationMethod": "algebra",
+    "edgeLabelLatex": "b=1",
+    "derivation": [
+      {
+        "latex": "f(x) = ab\\,x^{b-1}e^{-ax^{b}} \\;\\xrightarrow{\\;b=1\\;}\\; a\\,e^{-ax}",
+        "explanationKo": "b=1을 대입하면 x^0=1 이므로 곧바로 Exp(a)의 밀도가 된다."
+      },
+      {
+        "latex": "h(x) = \\frac{f(x)}{1-F(x)} = ab\\,x^{b-1} \\;\\xrightarrow{\\;b=1\\;}\\; a",
+        "explanationKo": "위험률로 보면 더 분명하다. b=1에서만 위험률이 상수이며, 이것이 '기억이 없다'는 성질의 다른 표현이다."
+      }
+    ],
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E38",
+    "from": "exponential",
+    "to": "dblexp",
+    "type": "transform",
+    "conditionLatex": "X_1, X_2 \\sim \\mathrm{Exp}(\\lambda) \\text{ 독립}",
+    "transformLatex": "Y = X_1 - X_2",
+    "summaryKo": "독립인 두 지수확률변수의 차가 이중지수(라플라스)분포다. 양수 쪽 꼬리는 X₁이 이겼을 때, 음수 쪽은 X₂가 이겼을 때 만들어지며 대칭이다.",
+    "bend": 0.24,
+    "derivationMethod": "convolution",
+    "isBinary": true,
+    "edgeLabelLatex": "X_1-X_2",
+    "derivation": [
+      {
+        "latex": "f_Y(y) = \\int_{0}^{\\infty} f_{X_1}(y+t)f_{X_2}(t)\\,dt \\quad (t = x_2)",
+        "explanationKo": "합성곱 공식이다. X₁ = Y + X₂ 이고 X₁ > 0 이어야 하므로 적분 구간이 정해진다."
+      },
+      {
+        "latex": "y\\ge 0:\\quad \\int_{0}^{\\infty}\\lambda e^{-\\lambda(y+t)}\\lambda e^{-\\lambda t}dt = \\lambda^{2}e^{-\\lambda y}\\int_0^\\infty e^{-2\\lambda t}dt = \\frac{\\lambda}{2}e^{-\\lambda y}",
+        "explanationKo": "y가 음이 아니면 t는 0부터 적분하면 된다."
+      },
+      {
+        "latex": "y< 0:\\quad \\text{대칭성으로}\\ f_Y(y) = f_Y(-y) = \\frac{\\lambda}{2}e^{\\lambda y}",
+        "explanationKo": "X₁과 X₂의 역할을 바꾸면 Y가 −Y가 되므로 분포는 원점 대칭이다."
+      },
+      {
+        "latex": "\\Rightarrow\\ f_Y(y) = \\frac{\\lambda}{2}e^{-\\lambda|y|}",
+        "explanationKo": "두 경우를 절댓값으로 묶으면 이중지수분포의 밀도다."
+      }
+    ],
+    "simulation": {
+      "recipe": "expDiffToLaplace",
+      "titleKo": "두 지수의 차가 이중지수가 되는가",
+      "noteKo": "Exp(λ) 두 개를 뽑아 차를 계산하고 DE(0,λ) 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.2,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "E39",
+    "from": "dblexp",
+    "to": "exponential",
+    "type": "transform",
+    "conditionLatex": "X \\sim \\mathrm{DE}(0,\\lambda)",
+    "transformLatex": "Y = |X|",
+    "summaryKo": "이중지수의 절댓값을 취하면 지수분포로 되돌아온다. 좌우 대칭인 두 반쪽을 겹쳐 접는 셈이라 밀도가 정확히 두 배가 된다.",
+    "bend": 0.24,
+    "derivationMethod": "cdf",
+    "edgeLabelLatex": "|X|",
+    "derivation": [
+      {
+        "latex": "F_Y(y) = P(|X|\\le y) = F_X(y) - F_X(-y),\\quad y>0",
+        "explanationKo": "절댓값이 y 이하라는 것은 X가 −y와 y 사이에 있다는 뜻이다."
+      },
+      {
+        "latex": "= \\left(1-\\tfrac{1}{2}e^{-\\lambda y}\\right) - \\tfrac{1}{2}e^{-\\lambda y} = 1-e^{-\\lambda y}",
+        "explanationKo": "이중지수의 CDF를 대입한다. 두 반쪽이 더해져 계수 1/2이 사라진다."
+      },
+      {
+        "latex": "\\Rightarrow\\ Y \\sim \\mathrm{Exp}(\\lambda)",
+        "explanationKo": "지수분포의 CDF와 정확히 같다."
+      }
+    ],
+    "simulation": {
+      "recipe": "laplaceAbsToExp",
+      "titleKo": "이중지수의 절댓값이 지수가 되는가",
+      "noteKo": "DE(0,λ)에서 뽑아 |X| 를 계산하고 Exp(λ) 밀도와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "lambda",
+          "nameKo": "λ",
+          "min": 0.2,
+          "max": 3,
+          "step": 0.1,
+          "default": 1
+        }
+      ]
+    },
+    "graphs": [
+      "full"
+    ]
+  },
+  {
+    "id": "D1",
+    "from": "bernoulli",
+    "to": "binomial",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립, 동일 } p",
+    "transformLatex": "Y = \\sum_{i=1}^{n} X_i",
+    "edgeLabelLatex": "\\sum_i X_i",
+    "summaryKo": "독립인 베르누이 시행 n번의 성공 횟수를 세면 이항분포가 된다.",
+    "bend": 0.22,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = 1 - p + pe^{t}",
+        "explanationKo": "베르누이의 적률생성함수다. 값이 0 아니면 1뿐이므로 곧바로 나온다."
+      },
+      {
+        "latex": "M_Y(t) = \\prod_{i=1}^{n} M_{X_i}(t) = (1-p+pe^{t})^{n}",
+        "explanationKo": "독립이므로 합의 MGF는 각 MGF의 곱이고, 같은 항이 n번 곱해진다."
+      },
+      {
+        "latex": "Y \\sim B(n, p)",
+        "explanationKo": "이항분포의 MGF와 같으므로 유일성에 의해 결론이 따라온다."
+      },
+      {
+        "latex": "E(Y) = np,\\qquad \\mathrm{Var}(Y) = np(1-p)",
+        "explanationKo": "평균과 분산도 각각 n배가 된다. 독립이어야 분산이 그냥 더해진다는 점이 중요하다 — 비복원추출이면 이 조건이 깨지고 초기하분포가 된다(D9)."
+      }
+    ],
+    "simulation": {
+      "recipe": "sumBernoulli",
+      "titleKo": "베르누이 n개를 더하면 이항인가",
+      "noteKo": "Bern(p)에서 n개를 뽑아 더한 표본을 B(n,p)의 이론 확률질량함수와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "시행 수 n",
+          "min": 1,
+          "max": 60,
+          "step": 1,
+          "default": 20
+        },
+        {
+          "symbol": "p",
+          "nameKo": "p",
+          "min": 0.05,
+          "max": 0.95,
+          "step": 0.05,
+          "default": 0.35
+        }
+      ]
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.16
+  },
+  {
+    "id": "D2",
+    "from": "binomial",
+    "to": "bernoulli",
+    "type": "special",
+    "conditionLatex": "n = 1",
+    "transformLatex": null,
+    "edgeLabelLatex": "n=1",
+    "summaryKo": "이항분포에서 시행 횟수가 1이면 베르누이분포다.",
+    "bend": 0.22,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X=k) = \\binom{n}{k}p^{k}(1-p)^{n-k}",
+        "explanationKo": "이항분포의 확률질량함수다."
+      },
+      {
+        "latex": "n=1 \\;\\Rightarrow\\; \\binom{1}{0}=\\binom{1}{1}=1",
+        "explanationKo": "n=1이면 조합 계수가 모두 1이 되고 k는 0 또는 1만 가능하다."
+      },
+      {
+        "latex": "P(X=0)=1-p,\\quad P(X=1)=p",
+        "explanationKo": "베르누이분포와 정확히 일치한다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.16
+  },
+  {
+    "id": "D3",
+    "from": "binomial",
+    "to": "binomial",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립, 동일 } p",
+    "transformLatex": "Y = \\sum_i X_i \\sim B\\!\\left(\\sum_i n_i,\\ p\\right)",
+    "edgeLabelLatex": "\\sum_i X_i",
+    "summaryKo": "성공확률이 같은 독립 이항확률변수들의 합은 다시 이항분포이며, 시행 횟수가 더해진다.",
+    "bend": 0.0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": -6
+    },
+    "selfLoop": true,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = (1-p+pe^{t})^{n_i}",
+        "explanationKo": "이항분포의 MGF다. 밑이 p에만 의존한다는 점이 핵심이다."
+      },
+      {
+        "latex": "M_Y(t) = \\prod_i (1-p+pe^{t})^{n_i} = (1-p+pe^{t})^{\\sum_i n_i}",
+        "explanationKo": "밑이 같으므로 지수부가 더해진다. p가 서로 다르면 이 묶음이 불가능하고, 합은 이항분포가 아니다."
+      },
+      {
+        "latex": "Y \\sim B\\!\\left(\\sum_i n_i,\\ p\\right)",
+        "explanationKo": "베르누이 시행을 그냥 이어 붙인 것이라고 읽으면 당연한 결과다(D1)."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0,
+    "labelOffsetDiscrete": {
+      "dx": 0,
+      "dy": -26
+    },
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D4",
+    "from": "bernoulli",
+    "to": "geometric",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립, 동일 } p",
+    "transformLatex": "Y = \\min\\{k : X_k = 1\\}",
+    "edgeLabelLatex": "\\text{첫 성공까지}",
+    "summaryKo": "베르누이 시행을 반복해 첫 성공이 나온 시행 번호를 세면 기하분포가 된다.",
+    "bend": -0.55,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "Y = k \\iff X_1=\\dots=X_{k-1}=0,\\ X_k=1",
+        "explanationKo": "첫 성공이 k번째라는 것은 앞의 k−1번이 모두 실패하고 k번째가 성공이라는 뜻이다."
+      },
+      {
+        "latex": "P(Y=k) = (1-p)^{k-1}p,\\quad k=1,2,\\dots",
+        "explanationKo": "독립이므로 확률이 곱해진다. 이것이 기하분포의 확률질량함수다."
+      },
+      {
+        "latex": "P(Y>k) = (1-p)^{k}",
+        "explanationKo": "생존함수가 더 간결하다. k번 모두 실패할 확률이다."
+      },
+      {
+        "latex": "P(Y>m+k \\mid Y>m) = \\frac{(1-p)^{m+k}}{(1-p)^{m}} = (1-p)^{k} = P(Y>k)",
+        "explanationKo": "이미 m번 실패했다는 사실이 앞으로의 분포를 전혀 바꾸지 않는다 — 기억 없음(memoryless)이며, 이 성질을 갖는 이산분포는 기하분포뿐이다."
+      }
+    ],
+    "simulation": {
+      "recipe": "firstSuccess",
+      "titleKo": "첫 성공까지 세면 기하분포인가",
+      "noteKo": "베르누이 시행을 성공이 나올 때까지 반복해 그 시행 번호를 기록합니다. Geom(p)의 이론 확률질량함수와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "p",
+          "nameKo": "p",
+          "min": 0.05,
+          "max": 0.9,
+          "step": 0.05,
+          "default": 0.3
+        }
+      ]
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.14,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D5",
+    "from": "geometric",
+    "to": "negbinomial",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립, 동일 } p",
+    "transformLatex": "Y = \\sum_{i=1}^{r} X_i",
+    "edgeLabelLatex": "\\sum_{i=1}^{r} X_i",
+    "summaryKo": "독립인 기하확률변수 r개를 더하면 음이항분포가 된다.",
+    "bend": 0.3,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = \\frac{pe^{t}}{1-(1-p)e^{t}}",
+        "explanationKo": "기하분포(시행 관례)의 적률생성함수다."
+      },
+      {
+        "latex": "M_Y(t) = \\left(\\frac{pe^{t}}{1-(1-p)e^{t}}\\right)^{r}",
+        "explanationKo": "독립이므로 곱해지고, 같은 항이 r번 곱해진다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{NB}(r, p)",
+        "explanationKo": "음이항분포의 MGF다. '첫 성공까지'를 r번 이어 붙이면 'r번째 성공까지'가 된다고 읽으면 직관적이다."
+      },
+      {
+        "latex": "E(Y) = \\frac{r}{p},\\qquad \\mathrm{Var}(Y) = \\frac{r(1-p)}{p^{2}}",
+        "explanationKo": "이 구조는 연속 쪽의 '지수 r개의 합 = 감마'(E9)와 완전히 같다. 기하:음이항 = 지수:감마 다."
+      }
+    ],
+    "simulation": {
+      "recipe": "sumGeometric",
+      "titleKo": "기하 r개의 합이 음이항인가",
+      "noteKo": "Geom(p)에서 r개를 뽑아 더한 표본을 NB(r,p)의 이론 확률질량함수와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "r",
+          "nameKo": "r",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "symbol": "p",
+          "nameKo": "p",
+          "min": 0.05,
+          "max": 0.9,
+          "step": 0.05,
+          "default": 0.3
+        }
+      ]
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.16
+  },
+  {
+    "id": "D6",
+    "from": "negbinomial",
+    "to": "geometric",
+    "type": "special",
+    "conditionLatex": "r = 1",
+    "transformLatex": null,
+    "edgeLabelLatex": "r=1",
+    "summaryKo": "음이항분포에서 목표 성공 횟수가 1이면 기하분포다.",
+    "bend": 0.3,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X=k) = \\binom{k-1}{r-1}p^{r}(1-p)^{k-r}",
+        "explanationKo": "음이항분포의 확률질량함수다."
+      },
+      {
+        "latex": "r=1 \\;\\Rightarrow\\; \\binom{k-1}{0} = 1",
+        "explanationKo": "조합 계수가 1이 되고 지수가 정리된다."
+      },
+      {
+        "latex": "P(X=k) = p(1-p)^{k-1}",
+        "explanationKo": "기하분포와 정확히 일치한다. 연속 쪽에서 Gamma(1,λ)=Exp(λ) 인 것(E7)과 같은 자리의 관계다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.16
+  },
+  {
+    "id": "D7",
+    "from": "binomial",
+    "to": "poisson",
+    "type": "limit",
+    "conditionLatex": "n \\to \\infty,\\ p \\to 0,\\ np = \\lambda \\text{ 고정}",
+    "transformLatex": null,
+    "edgeLabelLatex": "np=\\lambda",
+    "summaryKo": "이항분포에서 n이 크고 p가 작아 np가 일정하면 포아송분포에 수렴한다. 희귀사건의 법칙이다.",
+    "bend": 0.22,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "limitDemo": {
+      "varyParams": {
+        "n": "k"
+      },
+      "linkedParam": {
+        "p": "lambdaOverN",
+        "lambda": 4
+      },
+      "from": 4,
+      "to": 400,
+      "targetDist": "poisson",
+      "targetParams": {
+        "lambda": 4
+      }
+    },
+    "derivation": [
+      {
+        "latex": "M_X(t) = (1-p+pe^{t})^{n},\\qquad p = \\frac{\\lambda}{n}",
+        "explanationKo": "이항분포의 MGF에 p=λ/n을 대입한다."
+      },
+      {
+        "latex": "= \\left(1 + \\frac{\\lambda(e^{t}-1)}{n}\\right)^{n}",
+        "explanationKo": "괄호 안을 정리하면 (1 + c/n)^n 꼴이 된다."
+      },
+      {
+        "latex": "\\xrightarrow{\\ n\\to\\infty\\ } \\exp\\!\\left(\\lambda(e^{t}-1)\\right)",
+        "explanationKo": "(1+c/n)^n → e^c 이므로 극한이 곧바로 나온다."
+      },
+      {
+        "latex": "\\text{이는 } \\mathrm{Pois}(\\lambda) \\text{ 의 MGF다}",
+        "explanationKo": "n이 크고 p가 작을 때 이항 계산 대신 포아송을 쓰는 근거다. 실무 기준으로는 n ≥ 20, p ≤ 0.05 정도면 쓸 만하다."
+      }
+    ],
+    "simulation": {
+      "recipe": "binomToPoisson",
+      "titleKo": "n을 키우면 포아송이 되는가",
+      "noteKo": "λ=np를 고정한 채 n을 키우며 B(n, λ/n)에서 뽑은 표본을 Pois(λ)의 이론 확률질량함수와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "n",
+          "nameKo": "시행 수 n",
+          "min": 5,
+          "max": 400,
+          "step": 5,
+          "default": 40
+        },
+        {
+          "symbol": "lambda",
+          "nameKo": "λ = np",
+          "min": 0.5,
+          "max": 15,
+          "step": 0.5,
+          "default": 4
+        }
+      ]
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.34
+  },
+  {
+    "id": "D8",
+    "from": "poisson",
+    "to": "poisson",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\sum_i X_i \\sim \\mathrm{Pois}\\!\\left(\\sum_i \\lambda_i\\right)",
+    "edgeLabelLatex": "\\sum_i X_i",
+    "summaryKo": "독립인 포아송확률변수들의 합은 다시 포아송분포이며, 평균이 더해진다.",
+    "bend": 0.0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": 0
+    },
+    "selfLoop": true,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "M_{X_i}(t) = \\exp\\!\\left(\\lambda_i(e^{t}-1)\\right)",
+        "explanationKo": "포아송분포의 적률생성함수다."
+      },
+      {
+        "latex": "M_Y(t) = \\exp\\!\\left(\\left(\\sum_i \\lambda_i\\right)(e^{t}-1)\\right)",
+        "explanationKo": "지수의 곱은 지수부의 합이다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{Pois}\\!\\left(\\sum_i \\lambda_i\\right)",
+        "explanationKo": "서로 다른 구간에서 센 사건 수를 합치면 전체 구간에서 센 것과 같다는 뜻이다. 포아송 과정이 구간을 이어 붙여도 성립하는 이유가 이것이다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0,
+    "labelOffsetDiscrete": {
+      "dx": 0,
+      "dy": -42
+    }
+  },
+  {
+    "id": "D9",
+    "from": "hypergeometric",
+    "to": "binomial",
+    "type": "limit",
+    "conditionLatex": "N \\to \\infty,\\ \\dfrac{K}{N} \\to p",
+    "transformLatex": null,
+    "edgeLabelLatex": "N\\to\\infty,\\ K/N\\to p",
+    "summaryKo": "모집단이 충분히 크면 비복원추출과 복원추출의 차이가 사라져 초기하분포가 이항분포에 수렴한다.",
+    "bend": -0.2,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "limitDemo": {
+      "varyParams": {
+        "N": "k"
+      },
+      "linkedParam": {
+        "K": "halfN"
+      },
+      "fixed": {
+        "n": 10
+      },
+      "from": 20,
+      "to": 800,
+      "targetDist": "binomial",
+      "targetParams": {
+        "n": 10,
+        "p": 0.5
+      }
+    },
+    "derivation": [
+      {
+        "latex": "P(X=k) = \\frac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}",
+        "explanationKo": "초기하분포의 확률질량함수다."
+      },
+      {
+        "latex": "= \\binom{n}{k}\\cdot\\frac{K^{\\underline{k}}\\,(N-K)^{\\underline{n-k}}}{N^{\\underline{n}}}",
+        "explanationKo": "하강 계승으로 정리하면 이항계수가 앞으로 빠져나온다."
+      },
+      {
+        "latex": "\\frac{K^{\\underline{k}}}{N^{\\underline{k}}} \\to p^{k},\\qquad \\frac{(N-K)^{\\underline{n-k}}}{N^{\\underline{n-k}}} \\to (1-p)^{n-k}",
+        "explanationKo": "N이 커지면 하나 뽑아 뺀 것이 비율을 거의 바꾸지 못한다. 즉 시행이 사실상 독립이 된다."
+      },
+      {
+        "latex": "P(X=k) \\to \\binom{n}{k}p^{k}(1-p)^{n-k}",
+        "explanationKo": "이항분포의 확률질량함수다. 분산에 붙던 유한모집단 수정계수 (N−n)/(N−1) 도 1로 수렴한다 — 실무에서 N ≥ 20n 이면 이항으로 근사하는 근거다."
+      }
+    ],
+    "simulation": {
+      "recipe": "hyperToBinom",
+      "titleKo": "모집단을 키우면 이항이 되는가",
+      "noteKo": "성공비율 K/N을 고정한 채 N을 키우며 초기하 표본을 B(n, K/N)의 이론 확률질량함수와 겹쳐 봅니다.",
+      "controls": [
+        {
+          "symbol": "N",
+          "nameKo": "전체 N",
+          "min": 20,
+          "max": 800,
+          "step": 20,
+          "default": 50
+        },
+        {
+          "symbol": "n",
+          "nameKo": "뽑는 수 n",
+          "min": 2,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.13
+  },
+  {
+    "id": "D10",
+    "from": "geometric",
+    "to": "geometric",
+    "type": "transform",
+    "conditionLatex": "X_i \\text{ 독립}",
+    "transformLatex": "Y = \\min(X_1,\\dots,X_n) \\sim \\mathrm{Geom}\\!\\left(1-(1-p)^{n}\\right)",
+    "edgeLabelLatex": "\\min_i X_i",
+    "summaryKo": "독립 기하확률변수 n개의 최솟값은 다시 기하분포이며, 성공확률이 1−(1−p)ⁿ이 된다.",
+    "bend": 0.0,
+    "labelOffset": {
+      "dx": 0,
+      "dy": 0
+    },
+    "selfLoop": true,
+    "selfLoopBelow": true,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X_i > k) = (1-p)^{k}",
+        "explanationKo": "기하분포의 생존함수다. 최솟값 문제는 생존함수로 다루는 편이 훨씬 쉽다."
+      },
+      {
+        "latex": "P(Y>k) = \\prod_{i=1}^{n} (1-p)^{k} = \\left((1-p)^{n}\\right)^{k}",
+        "explanationKo": "최솟값이 k보다 크다는 것은 모두가 k보다 크다는 뜻이고, 독립이므로 확률이 곱해진다."
+      },
+      {
+        "latex": "Y \\sim \\mathrm{Geom}\\!\\left(1-(1-p)^{n}\\right)",
+        "explanationKo": "생존함수가 다시 기하 형태다. 후보가 n명이면 첫 성공이 그만큼 빨리 온다 — 연속 쪽 E10(지수의 최솟값이 Exp(nλ))과 같은 구조다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0,
+    "labelOffsetDiscrete": {
+      "dx": 0,
+      "dy": 44
+    }
+  },
+  {
+    "id": "D11",
+    "from": "binomial",
+    "to": "normal",
+    "type": "limit",
+    "conditionLatex": "n \\to \\infty,\\quad \\mu = np,\\ \\sigma^2 = np(1-p)",
+    "transformLatex": null,
+    "edgeLabelLatex": "\\mu = np,\\ \\sigma^{2} = np(1-p)",
+    "summaryKo": "이항분포는 n이 커지면 정규분포에 근사한다. 드무아브르–라플라스 정리이며, 중심극한정리의 첫 사례다.",
+    "bend": 0.24,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "isCltInstance": true,
+    "limitDemo": {
+      "varyParams": {
+        "n": "k"
+      },
+      "fixed": {
+        "p": 0.35
+      },
+      "from": 2,
+      "to": 300,
+      "targetDist": "normal",
+      "targetFromMoments": true
+    },
+    "derivation": [
+      {
+        "latex": "X = \\sum_{i=1}^{n} X_i,\\quad X_i \\sim \\mathrm{Bern}(p) \\text{ 독립}",
+        "explanationKo": "D1에 의해 이항은 베르누이의 합이다. 여기가 출발점이다."
+      },
+      {
+        "latex": "E(X_i) = p,\\qquad \\mathrm{Var}(X_i) = p(1-p) < \\infty",
+        "explanationKo": "평균과 분산이 유한하므로 중심극한정리의 전제가 만족된다."
+      },
+      {
+        "latex": "\\frac{X - np}{\\sqrt{np(1-p)}} \\;\\xrightarrow{d}\\; N(0,1)",
+        "explanationKo": "독립 동일분포 확률변수의 합을 표준화한 형태이므로 중심극한정리가 그대로 적용된다. 이것이 드무아브르–라플라스 정리다."
+      },
+      {
+        "latex": "P(X \\le k) \\approx \\Phi\\!\\left(\\frac{k + 0.5 - np}{\\sqrt{np(1-p)}}\\right)",
+        "explanationKo": "이산분포를 연속분포로 근사하므로 **연속성 수정** +0.5 를 붙여야 정확도가 크게 좋아진다. 이산을 연속으로 바꿀 때 늘 따라붙는 보정이다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.3
+  },
+  {
+    "id": "D12",
+    "from": "poisson",
+    "to": "normal",
+    "type": "limit",
+    "conditionLatex": "\\lambda \\to \\infty,\\quad \\mu = \\lambda,\\ \\sigma^2 = \\lambda",
+    "transformLatex": null,
+    "edgeLabelLatex": "\\lambda = \\mu = \\sigma^{2}",
+    "summaryKo": "포아송분포는 평균이 커지면 정규분포에 근사한다.",
+    "bend": 0.14,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "isCltInstance": true,
+    "limitDemo": {
+      "varyParams": {
+        "lambda": "k"
+      },
+      "from": 1,
+      "to": 200,
+      "targetDist": "normal",
+      "targetFromMoments": true
+    },
+    "derivation": [
+      {
+        "latex": "\\mathrm{Pois}(\\lambda) = \\sum_{i=1}^{m} \\mathrm{Pois}(\\lambda/m) \\text{ (독립)}",
+        "explanationKo": "D8을 거꾸로 읽으면, 평균 λ인 포아송은 평균 λ/m 인 독립 포아송 m개의 합이다."
+      },
+      {
+        "latex": "\\lambda \\text{ 가 크면 항의 개수를 얼마든지 늘릴 수 있다}",
+        "explanationKo": "따라서 λ→∞ 는 '독립인 것을 무한히 더한다'는 뜻이 되고, 중심극한정리의 상황이 만들어진다."
+      },
+      {
+        "latex": "\\frac{X-\\lambda}{\\sqrt{\\lambda}} \\;\\xrightarrow{d}\\; N(0,1)",
+        "explanationKo": "평균과 분산이 모두 λ이므로 표준화가 이 형태가 된다."
+      },
+      {
+        "latex": "\\text{실무 기준: } \\lambda \\ge 20 \\text{ 내외}",
+        "explanationKo": "왜도가 1/√λ 이므로 λ=20이면 약 0.22, λ=100이면 0.1 로 줄어든다. 필요한 λ 는 요구 정확도에 따라 달라진다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": -0.15
+  },
+  {
+    "id": "D13",
+    "from": "negbinomial",
+    "to": "normal",
+    "type": "limit",
+    "conditionLatex": "r \\to \\infty,\\quad \\mu = \\dfrac{r}{p},\\ \\sigma^2 = \\dfrac{r(1-p)}{p^{2}}",
+    "transformLatex": null,
+    "edgeLabelLatex": "\\mu = \\dfrac{r}{p},\\ \\sigma^{2} = \\dfrac{r(1-p)}{p^{2}}",
+    "summaryKo": "음이항분포는 목표 성공 횟수 r이 커지면 정규분포에 근사한다.",
+    "bend": -0.3,
+    "derivationMethod": "clt",
+    "isBinary": false,
+    "isCltInstance": true,
+    "limitDemo": {
+      "varyParams": {
+        "r": "k"
+      },
+      "fixed": {
+        "p": 0.3
+      },
+      "from": 1,
+      "to": 120,
+      "targetDist": "normal",
+      "targetFromMoments": true
+    },
+    "derivation": [
+      {
+        "latex": "X = \\sum_{i=1}^{r} G_i,\\quad G_i \\sim \\mathrm{Geom}(p) \\text{ 독립}",
+        "explanationKo": "D5에 의해 음이항은 기하확률변수 r개의 합이다."
+      },
+      {
+        "latex": "E(G_i) = \\frac{1}{p},\\qquad \\mathrm{Var}(G_i) = \\frac{1-p}{p^{2}} < \\infty",
+        "explanationKo": "평균과 분산이 유한하므로 중심극한정리의 전제가 만족된다."
+      },
+      {
+        "latex": "\\frac{X - r/p}{\\sqrt{r(1-p)}/p} \\;\\xrightarrow{d}\\; N(0,1)",
+        "explanationKo": "연속 쪽에서 Gamma(r,λ) 가 r→∞ 에 정규로 가는 것(E23)과 완전히 같은 구조다. 기하:음이항 = 지수:감마 이므로 극한도 대응한다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.14,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D14",
+    "from": "geometric",
+    "to": "exponential",
+    "type": "limit",
+    "conditionLatex": "p \\to 0",
+    "transformLatex": "Y = pX \\;\\xrightarrow{d}\\; \\mathrm{Exp}(1)",
+    "edgeLabelLatex": "pX,\\ p\\to 0",
+    "summaryKo": "기하확률변수에 p를 곱하고 p를 0으로 보내면 지수분포가 된다. 이산 대기시간의 연속 극한이다.",
+    "bend": 0.42,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X > k) = (1-p)^{k}",
+        "explanationKo": "기하분포의 생존함수에서 출발한다."
+      },
+      {
+        "latex": "P(pX > y) = P\\!\\left(X > \\frac{y}{p}\\right) = (1-p)^{\\lfloor y/p \\rfloor}",
+        "explanationKo": "시간 눈금을 p배로 줄여 본다. 한 번의 시행이 차지하는 시간이 p라고 생각하면 된다."
+      },
+      {
+        "latex": "\\ln (1-p)^{y/p} = \\frac{y}{p}\\ln(1-p) \\to -y \\quad (p \\to 0)",
+        "explanationKo": "ln(1−p) ≈ −p 이므로 지수부가 −y로 수렴한다."
+      },
+      {
+        "latex": "P(pX > y) \\to e^{-y} \\;\\Rightarrow\\; pX \\xrightarrow{d} \\mathrm{Exp}(1)",
+        "explanationKo": "이산의 '기억 없음'이 연속의 '기억 없음'으로 그대로 넘어간다. 두 분포가 각 세계에서 유일한 무기억 분포인 것은 우연이 아니다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": -0.16,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D15",
+    "from": "poisson",
+    "to": "exponential",
+    "type": "transform",
+    "conditionLatex": "\\text{비율 } \\lambda \\text{ 인 포아송 과정}",
+    "transformLatex": "T = \\text{사건 사이의 간격} \\sim \\mathrm{Exp}(\\lambda)",
+    "edgeLabelLatex": "\\text{사건 간격}",
+    "summaryKo": "포아송 과정에서 사건과 사건 사이의 시간 간격은 지수분포를 따른다.",
+    "bend": 0.32,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "N(t) \\sim \\mathrm{Pois}(\\lambda t)",
+        "explanationKo": "비율 λ인 포아송 과정에서 시간 t까지의 사건 수다. D8이 이 과정을 구간별로 이어 붙일 수 있게 해 준다."
+      },
+      {
+        "latex": "P(T > t) = P(N(t) = 0)",
+        "explanationKo": "다음 사건까지 t보다 오래 걸린다는 것은 [0,t] 구간에 사건이 하나도 없다는 것과 같은 사건이다. 이 한 줄이 전부다."
+      },
+      {
+        "latex": "= \\frac{(\\lambda t)^{0}e^{-\\lambda t}}{0!} = e^{-\\lambda t}",
+        "explanationKo": "포아송 확률질량함수에 k=0을 넣는다."
+      },
+      {
+        "latex": "T \\sim \\mathrm{Exp}(\\lambda)",
+        "explanationKo": "지수분포의 생존함수와 일치한다. **개수를 세면 포아송, 시간을 재면 지수** — 같은 현상의 두 관점이다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.22,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D16",
+    "from": "poisson",
+    "to": "gamma",
+    "type": "transform",
+    "conditionLatex": "\\text{비율 } \\lambda \\text{ 인 포아송 과정}",
+    "transformLatex": "T_r = r\\text{번째 사건까지의 시간} \\sim \\mathrm{Gamma}(r, \\lambda)",
+    "edgeLabelLatex": "r\\text{번째 사건까지}",
+    "summaryKo": "포아송 과정에서 r번째 사건이 일어날 때까지의 시간은 감마분포를 따른다. 두 분포의 누적확률이 서로를 대신한다.",
+    "bend": 0.34,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "T_r = \\sum_{i=1}^{r} T^{(i)},\\quad T^{(i)} \\sim \\mathrm{Exp}(\\lambda) \\text{ 독립}",
+        "explanationKo": "D15에 의해 각 간격이 지수분포이고, 무기억성 덕분에 서로 독립이다."
+      },
+      {
+        "latex": "T_r \\sim \\mathrm{Gamma}(r, \\lambda)",
+        "explanationKo": "연속 쪽 E9(지수 r개의 합 = 감마)를 그대로 쓴다."
+      },
+      {
+        "latex": "P(T_r > t) = P(N(t) < r) = \\sum_{k=0}^{r-1}\\frac{(\\lambda t)^{k}e^{-\\lambda t}}{k!}",
+        "explanationKo": "r번째 사건이 아직 안 왔다는 것과 t까지 센 사건이 r개 미만이라는 것은 같은 사건이다. 이 쌍대성이 두 분포를 잇는다."
+      },
+      {
+        "latex": "\\text{즉 감마의 꼬리확률 = 포아송의 부분합}",
+        "explanationKo": "감마분포표 없이 포아송 계산만으로 감마 확률을 얻을 수 있다는 뜻이다. 실제로 이 사이트의 카이제곱 CDF도 같은 불완전감마 함수를 쓴다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": -0.13,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D17",
+    "from": "negbinomial",
+    "to": "gamma",
+    "type": "limit",
+    "conditionLatex": "p \\to 0",
+    "transformLatex": "Y = pX \\;\\xrightarrow{d}\\; \\mathrm{Gamma}(r, 1)",
+    "edgeLabelLatex": "pX,\\ p\\to 0",
+    "summaryKo": "음이항확률변수에 p를 곱하고 p를 0으로 보내면 감마분포가 된다. D14의 r개 버전이다.",
+    "bend": -0.4,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "X = \\sum_{i=1}^{r} G_i,\\quad G_i \\sim \\mathrm{Geom}(p) \\text{ 독립}",
+        "explanationKo": "D5에 의해 음이항은 기하 r개의 합이다."
+      },
+      {
+        "latex": "pX = \\sum_{i=1}^{r} pG_i",
+        "explanationKo": "p를 각 항에 나눠 넣는다."
+      },
+      {
+        "latex": "pG_i \\xrightarrow{d} \\mathrm{Exp}(1) \\quad (D14)",
+        "explanationKo": "각 항이 지수분포로 수렴한다."
+      },
+      {
+        "latex": "pX \\xrightarrow{d} \\sum_{i=1}^{r}\\mathrm{Exp}(1) = \\mathrm{Gamma}(r,1)",
+        "explanationKo": "독립 지수 r개의 합은 감마다(E9). 이산 세계의 (기하, 음이항) 이 연속 세계의 (지수, 감마) 로 한꺼번에 넘어간다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": 0.16,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D18",
+    "from": "binomial",
+    "to": "beta",
+    "type": "transform",
+    "conditionLatex": null,
+    "transformLatex": "P(X \\le k) = P\\big(\\mathrm{Beta}(k+1,\\, n-k) > p\\big)",
+    "edgeLabelLatex": "\\text{CDF 쌍대성}",
+    "summaryKo": "이항분포의 누적확률은 베타분포의 꼬리확률과 같다. 이항비율의 정확신뢰구간이 여기서 나온다.",
+    "bend": -0.26,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X \\le k) = \\sum_{j=0}^{k}\\binom{n}{j}p^{j}(1-p)^{n-j}",
+        "explanationKo": "이항분포의 누적확률이다."
+      },
+      {
+        "latex": "= I_{1-p}(n-k,\\ k+1) = 1 - I_{p}(k+1,\\ n-k)",
+        "explanationKo": "정규화 불완전베타 함수로 정확히 표현된다. 부분적분을 반복하면 얻어지는 항등식이다."
+      },
+      {
+        "latex": "= P\\big(\\mathrm{Beta}(k+1,\\, n-k) > p\\big)",
+        "explanationKo": "I_p(α,β) 가 곧 베타분포의 CDF이므로, 이항의 누적확률이 베타의 꼬리확률로 바뀐다."
+      },
+      {
+        "latex": "\\text{Clopper–Pearson: } p_L = \\mathrm{Beta}^{-1}_{\\alpha/2}(x,\\ n-x+1)",
+        "explanationKo": "이 쌍대성 덕분에 이항비율의 신뢰구간을 근사 없이 베타 분위수로 정확히 구할 수 있다. 이 사이트의 이항 CDF도 실제로 불완전베타로 계산한다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": -0.3,
+    "isExtendedInFull": true
+  },
+  {
+    "id": "D19",
+    "from": "discreteUniform",
+    "to": "unifab",
+    "type": "limit",
+    "conditionLatex": "m = b-a+1 \\to \\infty",
+    "transformLatex": "Y = \\dfrac{X-a}{m} \\;\\xrightarrow{d}\\; U(0,1)",
+    "edgeLabelLatex": "\\text{눈금} \\to \\infty",
+    "summaryKo": "이산 균등분포에서 눈금을 무한히 잘게 쪼개면 연속 균등분포가 된다.",
+    "bend": 0.1,
+    "derivationMethod": "cdf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X \\le k) = \\frac{k-a+1}{m},\\quad m = b-a+1",
+        "explanationKo": "이산 균등분포의 계단형 CDF다."
+      },
+      {
+        "latex": "Y = \\frac{X-a}{m},\\qquad P(Y \\le y) = \\frac{\\lfloor my \\rfloor + 1}{m}",
+        "explanationKo": "0과 1 사이로 눌러 담는다."
+      },
+      {
+        "latex": "\\left|\\frac{\\lfloor my \\rfloor + 1}{m} - y\\right| \\le \\frac{1}{m} \\to 0",
+        "explanationKo": "계단의 높이가 1/m 이므로 m이 커지면 계단이 직선 y로 눌린다."
+      },
+      {
+        "latex": "\\mathrm{Var}(X) = \\frac{m^{2}-1}{12} \\;\\longleftrightarrow\\; \\mathrm{Var}(U) = \\frac{(b-a)^{2}}{12}",
+        "explanationKo": "분산 공식을 나란히 놓으면 −1 항만 사라진 채 그대로 넘어간다. 이산과 연속이 같은 자리에 있다는 표시다."
+      }
+    ],
+    "graphs": [
+      "discrete"
+    ]
+  },
+  {
+    "id": "D20",
+    "from": "negbinomial",
+    "to": "poisson",
+    "type": "limit",
+    "conditionLatex": "r \\to \\infty,\\ p \\to 1,\\ \\dfrac{r(1-p)}{p} \\to \\lambda",
+    "transformLatex": "Y = X - r \\;\\xrightarrow{d}\\; \\mathrm{Pois}(\\lambda)",
+    "edgeLabelLatex": "\\lambda = \\dfrac{r(1-p)}{p}",
+    "summaryKo": "음이항분포의 실패 횟수는 조건을 맞추면 포아송분포에 수렴한다. 과산포 계수자료를 다룰 때의 근거다.",
+    "bend": -0.14,
+    "derivationMethod": "mgf",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "Y = X - r = \\text{실패 횟수},\\qquad M_Y(t) = \\left(\\frac{p}{1-(1-p)e^{t}}\\right)^{r}",
+        "explanationKo": "시행 횟수에서 성공 r번을 빼면 실패 횟수다. 이 관계도는 시행 관례를 쓰므로 변환이 필요하다."
+      },
+      {
+        "latex": "q = 1-p = \\frac{\\lambda}{r+\\lambda} \\to 0",
+        "explanationKo": "r(1−p)/p → λ 가 되도록 q를 잡는다."
+      },
+      {
+        "latex": "M_Y(t) \\to \\exp\\!\\left(\\lambda(e^{t}-1)\\right)",
+        "explanationKo": "극한을 취하면 포아송의 MGF가 나온다."
+      },
+      {
+        "latex": "\\mathrm{Var}(Y) = \\lambda\\left(1+\\frac{\\lambda}{r}\\right) > \\lambda = E(Y)",
+        "explanationKo": "유한한 r에서는 분산이 평균보다 크다. 그래서 음이항분포를 **과산포된 포아송**으로 쓰며, 포아송 회귀가 안 맞을 때의 대안이 된다."
+      }
+    ],
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "bendDiscrete": -0.14,
+    "note": "참조 다이어그램은 λ = n(1−p) 로 적혀 있습니다. 그 표기는 음이항을 \"실패 횟수\"로 세는 규약(지지집합 0부터)의 것이고, 이 사이트는 \"시행 횟수\" 규약이라 X−r 로 옮긴 뒤 평균이 r(1−p)/p 가 됩니다. p → 1 이므로 두 값은 극한에서 같습니다."
+  },
+  {
+    "id": "D21",
+    "from": "discreteUniform",
+    "to": "bernoulli",
+    "type": "special",
+    "conditionLatex": "a = 0,\\ b = 1",
+    "transformLatex": null,
+    "edgeLabelLatex": "a=0,\\ b=1",
+    "summaryKo": "이산 균등분포에서 값이 0과 1뿐이면 성공확률 1/2인 베르누이분포다.",
+    "bend": -0.45,
+    "derivationMethod": "substitution",
+    "isBinary": false,
+    "derivation": [
+      {
+        "latex": "P(X=k) = \\frac{1}{b-a+1},\\quad k = a,\\dots,b",
+        "explanationKo": "이산 균등분포의 확률질량함수다."
+      },
+      {
+        "latex": "a=0,\\ b=1 \\;\\Rightarrow\\; P(X=0)=P(X=1)=\\tfrac{1}{2}",
+        "explanationKo": "값이 둘뿐이고 확률이 같다."
+      },
+      {
+        "latex": "X \\sim \\mathrm{Bern}\\!\\left(\\tfrac{1}{2}\\right)",
+        "explanationKo": "공정한 동전이다. 이 한 줄이 이산 균등분포를 나머지 관계도와 이어 준다 — 주사위와 동전이 같은 뿌리라는 뜻이기도 하다."
+      }
+    ],
+    "graphs": [
+      "discrete"
+    ],
+    "bendDiscrete": -0.6
+  },
+  {
+    "id": "D22",
+    "from": "poisson",
+    "to": "binomial",
+    "type": "transform",
+    "conditionLatex": "X_1\\sim\\mathrm{Pois}(\\lambda_1),\\ X_2\\sim\\mathrm{Pois}(\\lambda_2) \\text{ 독립}",
+    "transformLatex": "X_1 \\mid (X_1+X_2=n) \\sim \\mathrm{Bin}\\!\\left(n, \\dfrac{\\lambda_1}{\\lambda_1+\\lambda_2}\\right)",
+    "summaryKo": "독립인 두 포아송의 **합을 알고 있다는 조건**을 주면, 그중 하나가 차지하는 개수는 이항분포를 따른다. 전체 사건 수가 정해진 순간 각 사건이 어느 쪽에서 왔는지는 λ 비율에 따른 독립 동전던지기가 되기 때문이다.",
+    "bend": 0.22,
+    "derivationMethod": "algebra",
+    "isBinary": true,
+    "edgeLabelLatex": "X \\mid \\textstyle\\sum_i X_i",
+    "graphs": [
+      "full",
+      "discrete"
+    ],
+    "derivation": [
+      {
+        "latex": "P(X_1=k \\mid X_1+X_2=n) = \\frac{P(X_1=k)P(X_2=n-k)}{P(X_1+X_2=n)}",
+        "explanationKo": "조건부확률의 정의다. 분모는 두 포아송의 합이므로 Pois(λ₁+λ₂) 다(D8)."
+      },
+      {
+        "latex": "= \\frac{\\dfrac{e^{-\\lambda_1}\\lambda_1^{k}}{k!}\\cdot\\dfrac{e^{-\\lambda_2}\\lambda_2^{\\,n-k}}{(n-k)!}}{\\dfrac{e^{-(\\lambda_1+\\lambda_2)}(\\lambda_1+\\lambda_2)^{n}}{n!}}",
+        "explanationKo": "세 확률질량함수를 그대로 대입한다."
+      },
+      {
+        "latex": "= \\binom{n}{k}\\left(\\frac{\\lambda_1}{\\lambda_1+\\lambda_2}\\right)^{k}\\left(\\frac{\\lambda_2}{\\lambda_1+\\lambda_2}\\right)^{n-k}",
+        "explanationKo": "지수항 e^(−λ)가 모두 약분되고 n!/(k!(n−k)!) 이 이항계수로 묶인다. λ 는 비율로만 남는다."
+      },
+      {
+        "latex": "\\Rightarrow\\ X_1 \\mid (X_1+X_2=n) \\sim \\mathrm{Bin}\\!\\left(n, \\tfrac{\\lambda_1}{\\lambda_1+\\lambda_2}\\right)",
+        "explanationKo": "λ의 절대 크기는 사라지고 비율 p = λ₁/(λ₁+λ₂) 만 남는다."
+      }
+    ],
+    "simulation": {
+      "recipe": "poisCondBinom",
+      "titleKo": "합을 조건으로 준 포아송이 이항이 되는가",
+      "noteKo": "두 포아송을 뽑아 합이 정확히 n인 경우만 골라(기각표본추출) X₁의 분포를 보고, Bin(n, λ₁/(λ₁+λ₂)) 와 겹쳐 봅니다. λ₁+λ₂ 를 n 근처로 두어야 채택률이 높아 표본이 빨리 모입니다.",
+      "controls": [
+        {
+          "symbol": "lambda1",
+          "nameKo": "λ₁",
+          "min": 1,
+          "max": 12,
+          "step": 0.5,
+          "default": 4
+        },
+        {
+          "symbol": "lambda2",
+          "nameKo": "λ₂",
+          "min": 1,
+          "max": 12,
+          "step": 0.5,
+          "default": 6
+        },
+        {
+          "symbol": "n",
+          "nameKo": "조건 n",
+          "min": 2,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    "bendDiscrete": 0.3
+  }
+]

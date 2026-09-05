@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률분포 관계 탐색기</title>
+<meta name="description" content="확률분포 21종(연속 14 · 이산 7)과 그 사이의 관계 61개를 탐색하는 교육용 도구">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/graph.css">
+<link rel="stylesheet" href="css/panel.css">
+<script defer src="vendor/katex/katex.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <h1>확률분포 관계 탐색기</h1>
+    <span class="sub" id="head-sub">연속 14 · 이산 6 · 관계 59</span>
+    <span class="spacer"></span>
+    <nav>
+      <a href="index.html" class="on">전체 관계도</a>
+      <a href="discrete.html">이산 관계도</a>
+      <a href="clt.html">중심극한정리</a>
+      <a href="about.html">표기 규약</a>
+    </nav>
+    <button class="btn btn-sm" id="btn-theme" type="button">다크</button>
+    <button class="btn btn-sm btn-ghost" id="btn-panel" type="button">패널 접기</button>
+  </header>
+
+  <div id="toolbar"></div>
+  <div id="pathbar"></div>
+  <div id="path-result"></div>
+  <div id="tour" hidden></div>
+
+  <div class="main">
+    <div class="graph-pane">
+      <div class="graph-wrap">
+        <div id="graph" style="width:100%;height:100%"></div>
+        <div id="legend"></div>
+        <div class="graph-tools">
+          <button class="btn btn-sm" id="btn-reset" type="button">전체 보기</button>
+        </div>
+      </div>
+    </div>
+    <aside class="panel-pane" aria-label="상세 정보">
+      <div id="panel-body"></div>
+    </aside>
+  </div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

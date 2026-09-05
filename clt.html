@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중심극한정리 시뮬레이터</title>
+<meta name="description" content="임의의 분포에서 표본평균이 정규분포로 수렴하는 과정을 직접 조작하며 확인한다">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/graph.css">
+<link rel="stylesheet" href="css/panel.css">
+<link rel="stylesheet" href="css/clt.css">
+<script defer src="vendor/katex/katex.min.js"></script>
+</head>
+<body class="page-clt">
+<header class="topbar">
+  <h1>중심극한정리 시뮬레이터</h1>
+  <span class="sub">유한한 분산을 갖는 <b>모든</b> 분포에 적용되는 메타 관계</span>
+  <span class="spacer"></span>
+  <nav>
+    <a href="index.html">전체 관계도</a>
+    <a href="discrete.html">이산 관계도</a>
+    <a href="clt.html" class="on">중심극한정리</a>
+    <a href="about.html">표기 규약</a>
+  </nav>
+  <button class="btn btn-sm" id="btn-theme" type="button">다크</button>
+</header>
+
+<main class="clt-main">
+  <p class="clt-intro">
+    중심극한정리는 두 분포를 잇는 화살표가 아닙니다. <b>유한한 분산을 갖는 어떤 분포에서 뽑든</b>
+    표본평균은 정규분포로 수렴한다는, 모든 분포에 동시에 적용되는 진술입니다.
+    그래서 관계도의 엣지가 아니라 이 독립 화면으로 만들었습니다.
+    관계도의 <a href="index.html#/edge/E23">Gamma → N</a>과
+    <a href="index.html#/edge/E22">Beta → N</a>은 이 정리의 특수 사례입니다.
+  </p>
+  <div id="clt"></div>
+</main>
+<script type="module" src="js/clt-main.js"></script>
+</body>
+</html>
