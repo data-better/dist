@@ -12,7 +12,7 @@
 
 ### 연결
 
-- https://databetter25.github.io/dist/
+- https://data-better.github.io/dist/
 
 ## 로컬 실행
 
