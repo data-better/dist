@@ -6,7 +6,7 @@ GitHub Actions도, 별도 설정 파일도 필요 없습니다.
 목표 주소:
 
 ```
-https://databetter25.github.io/distribution/
+https://databetter25.github.io/dist/
 ```
 
 아래 세 가지 방법 중 **하나만** 하시면 됩니다. 터미널이 익숙하지 않으시면 A를 권합니다.
@@ -76,7 +76,7 @@ git push -u origin main
 cd distribution
 git init -b main && git add . && git commit -m "확률분포 관계 탐색기"
 gh repo create distribution --public --source=. --push
-gh api -X POST repos/databetter25/distribution/pages \
+gh api -X POST repos/databetter25/dist/pages \
   -f 'source[branch]=main' -f 'source[path]=/'
 ```
 
